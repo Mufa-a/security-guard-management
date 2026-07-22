@@ -1,0 +1,1341 @@
+2026-07-14 14:30:22,404 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 14:35:21,357 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 14:35:55,001 ERROR django.request Internal Server Error: /admin/accounts/user/add/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 220, in _get_response
+    response = response.render()
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\contrib\admin\templatetags\base.py", line 45, in render
+    return super().render(context)
+           ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\library.py", line 271, in render
+    new_context = context.new(_dict)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 273, in new
+    new_context = super().new(values)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 110, in new
+    new_context = copy(self)
+  File "C:\Python314\Lib\copy.py", line 82, in copy
+    return copier(x)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 158, in __copy__
+    duplicate = super().__copy__()
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 39, in __copy__
+    duplicate.dicts = self.dicts[:]
+    ^^^^^^^^^^^^^^^
+AttributeError: 'super' object has no attribute 'dicts' and no __dict__ for setting new attributes
+2026-07-14 14:36:00,113 ERROR django.request Internal Server Error: /admin/accounts/role/add/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 220, in _get_response
+    response = response.render()
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\contrib\admin\templatetags\base.py", line 45, in render
+    return super().render(context)
+           ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\library.py", line 271, in render
+    new_context = context.new(_dict)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 273, in new
+    new_context = super().new(values)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 110, in new
+    new_context = copy(self)
+  File "C:\Python314\Lib\copy.py", line 82, in copy
+    return copier(x)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 158, in __copy__
+    duplicate = super().__copy__()
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 39, in __copy__
+    duplicate.dicts = self.dicts[:]
+    ^^^^^^^^^^^^^^^
+AttributeError: 'super' object has no attribute 'dicts' and no __dict__ for setting new attributes
+2026-07-14 14:47:44,822 ERROR django.request Internal Server Error: /admin/accounts/role/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 220, in _get_response
+    response = response.render()
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\contrib\admin\templatetags\base.py", line 45, in render
+    return super().render(context)
+           ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\library.py", line 271, in render
+    new_context = context.new(_dict)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 273, in new
+    new_context = super().new(values)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 110, in new
+    new_context = copy(self)
+  File "C:\Python314\Lib\copy.py", line 82, in copy
+    return copier(x)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 158, in __copy__
+    duplicate = super().__copy__()
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 39, in __copy__
+    duplicate.dicts = self.dicts[:]
+    ^^^^^^^^^^^^^^^
+AttributeError: 'super' object has no attribute 'dicts' and no __dict__ for setting new attributes
+2026-07-14 14:48:34,998 ERROR django.request Internal Server Error: /admin/auth/group/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 220, in _get_response
+    response = response.render()
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 1000, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\base.py", line 961, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\contrib\admin\templatetags\base.py", line 45, in render
+    return super().render(context)
+           ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\library.py", line 271, in render
+    new_context = context.new(_dict)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 273, in new
+    new_context = super().new(values)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 110, in new
+    new_context = copy(self)
+  File "C:\Python314\Lib\copy.py", line 82, in copy
+    return copier(x)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 158, in __copy__
+    duplicate = super().__copy__()
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\template\context.py", line 39, in __copy__
+    duplicate.dicts = self.dicts[:]
+    ^^^^^^^^^^^^^^^
+AttributeError: 'super' object has no attribute 'dicts' and no __dict__ for setting new attributes
+2026-07-14 14:58:59,618 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 15:12:35,197 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 15:18:00,046 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 15:21:21,518 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 15:22:26,743 WARNING django.request Not Found: /api/accounts/login/
+2026-07-14 15:24:41,343 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 15:24:47,193 WARNING django.request Method Not Allowed: /api/accounts/login/
+2026-07-14 15:28:09,803 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-14 15:28:15,586 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-14 15:29:21,020 WARNING django.request Not Found: /api/manager/profiles/
+2026-07-14 15:29:30,948 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-14 15:32:12,765 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-14 17:15:54,614 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 17:16:48,437 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-14 17:16:50,763 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-14 17:18:59,127 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 17:19:36,643 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-14 17:19:38,014 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-14 17:19:38,377 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-14 17:24:44,465 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-14 17:25:23,642 WARNING django.request Not Found: /favicon.ico
+2026-07-14 17:55:45,059 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 17:57:30,751 WARNING django.request Bad Request: /api/staff/profiles/
+2026-07-14 17:58:18,069 WARNING django.request Bad Request: /api/staff/profiles/
+2026-07-14 18:05:17,984 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 18:17:00,563 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-14 18:17:07,804 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 18:18:09,989 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\config\urls.py changed, reloading.
+2026-07-14 18:18:13,565 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 18:21:15,151 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 18:23:27,479 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 18:24:06,161 ERROR django.request Internal Server Error: /api/sites/clients/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 415, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 332, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py", line 34, in has_permission
+    if request.method in SAFE_METHODS:
+                         ^^^^^^^^^^^^
+NameError: name 'SAFE_METHODS' is not defined
+2026-07-14 18:24:46,267 ERROR django.request Internal Server Error: /api/sites/sites/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 415, in initial
+    self.check_permissions(request)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 332, in check_permissions
+    if not permission.has_permission(request, self):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py", line 34, in has_permission
+    if request.method in SAFE_METHODS:
+                         ^^^^^^^^^^^^
+NameError: name 'SAFE_METHODS' is not defined
+2026-07-14 18:25:34,666 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-14 18:25:41,814 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 18:25:43,423 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-14 18:25:48,490 WARNING django.request Forbidden: /api/sites/clients/
+2026-07-14 18:28:06,716 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-14 18:28:11,153 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 18:41:03,797 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-14 18:43:07,848 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\config\urls.py changed, reloading.
+2026-07-14 18:43:15,074 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 10:33:03,217 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 10:33:07,605 WARNING django.request Not Found: /favicon.ico
+2026-07-15 10:36:29,202 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\config\urls.py changed, reloading.
+2026-07-15 10:36:36,596 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 10:39:26,372 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-15 10:39:30,897 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 10:39:59,535 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\attendance\views.py changed, reloading.
+2026-07-15 10:40:05,816 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 10:44:58,473 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\attendance\apps.py changed, reloading.
+2026-07-15 10:45:04,467 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 10:45:26,438 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-15 10:45:31,105 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 10:46:22,315 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\attendance\serializers.py changed, reloading.
+2026-07-15 10:46:28,066 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 10:46:47,667 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\attendance\views.py changed, reloading.
+2026-07-15 10:46:52,659 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 10:47:46,665 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 11:00:45,074 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 11:00:48,356 WARNING django.request Not Found: /favicon.ico
+2026-07-15 11:04:08,321 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 11:05:45,225 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-15 11:07:20,693 WARNING django.request Not Found: /api/attendance/records/1/check-in/
+2026-07-15 11:09:57,478 WARNING django.request Bad Request: /api/attendance/records/03eb292d-b2f6-4076-861d-7317259b910d/check-in/
+2026-07-15 11:14:54,685 WARNING django.request Unauthorized: /api/attendance/records/
+2026-07-15 11:19:19,354 WARNING django.request Unauthorized: /api/attendance/records/
+2026-07-15 11:22:50,828 WARNING django.request Not Found: /api/attendance/records/03eb292d-b2f6-4076-861d-7317259b910d/check-in/
+2026-07-15 11:38:42,940 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 11:43:47,114 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\config\urls.py changed, reloading.
+2026-07-15 11:43:51,252 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 11:46:45,934 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-15 11:46:49,859 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 11:47:20,227 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\incidents\views.py changed, reloading.
+2026-07-15 11:47:23,695 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 11:49:56,437 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-15 11:49:58,382 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 11:53:46,332 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 11:56:00,835 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-15 11:57:21,140 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-15 12:00:18,006 WARNING django.request Forbidden: /api/incidents/incidents/c19c1b17-1c1f-4f8f-ad8e-9afe047cfe6d/
+2026-07-15 12:41:53,721 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\config\settings\base.py changed, reloading.
+2026-07-15 12:41:59,428 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 12:42:13,879 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\invoices\apps.py changed, reloading.
+2026-07-15 12:42:17,733 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 12:42:30,722 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\invoices\models.py changed, reloading.
+2026-07-15 12:42:35,002 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 12:43:14,681 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\invoices\admin.py changed, reloading.
+2026-07-15 12:43:18,575 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 12:43:35,786 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-15 12:43:39,286 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 12:45:04,710 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\config\urls.py changed, reloading.
+2026-07-15 12:45:09,214 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 12:53:13,309 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-15 13:38:42,290 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-15 15:03:03,487 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\views.py changed, reloading.
+2026-07-15 15:03:08,134 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 15:03:39,674 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\urls.py changed, reloading.
+2026-07-15 15:03:43,537 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 15:04:35,213 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\urls.py changed, reloading.
+2026-07-15 15:04:38,073 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-15 15:30:54,131 WARNING django.request Bad Request: /api/sites/sites/
+2026-07-15 15:30:58,040 WARNING django.request Bad Request: /api/sites/sites/
+2026-07-15 15:31:08,678 WARNING django.request Bad Request: /api/sites/sites/
+2026-07-15 15:34:40,908 WARNING django.request Bad Request: /api/sites/sites/
+2026-07-15 15:34:51,971 WARNING django.request Bad Request: /api/sites/sites/
+2026-07-15 15:34:52,200 WARNING django.request Bad Request: /api/sites/sites/
+2026-07-15 15:35:50,073 WARNING django.request Bad Request: /api/sites/sites/
+2026-07-15 15:35:52,217 WARNING django.request Bad Request: /api/sites/sites/
+2026-07-15 15:37:44,427 WARNING django.request Bad Request: /api/sites/sites/
+2026-07-16 10:17:19,144 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 10:33:26,208 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 10:40:44,393 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\views.py changed, reloading.
+2026-07-16 10:40:50,242 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 10:44:30,882 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 10:48:43,862 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\serializers.py changed, reloading.
+2026-07-16 10:48:49,312 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 10:50:22,640 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\serializers.py changed, reloading.
+2026-07-16 10:50:29,747 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 10:52:06,516 WARNING django.request Not Found: /favicon.ico
+2026-07-16 10:53:38,040 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 10:53:53,182 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 10:55:19,391 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 10:55:56,017 WARNING django.request Bad Request: /api/staff/profiles/
+2026-07-16 10:56:18,382 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 10:56:33,992 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 10:56:59,477 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 10:57:25,072 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 10:57:54,646 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 10:58:45,025 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 10:58:59,177 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 11:00:42,388 WARNING django.request Bad Request: /api/staff/profiles/
+2026-07-16 11:00:59,283 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 11:01:58,005 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 11:02:16,936 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 11:04:18,659 WARNING django.request Not Found: /favicon.ico
+2026-07-16 11:06:39,947 WARNING django.request Bad Request: /api/staff/profiles/
+2026-07-16 11:06:53,413 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-16 11:15:03,526 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\serializers.py changed, reloading.
+2026-07-16 11:15:09,322 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 11:16:38,655 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\serializers.py changed, reloading.
+2026-07-16 11:16:44,463 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 11:21:20,882 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\serializers.py changed, reloading.
+2026-07-16 11:21:29,702 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 11:22:09,554 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\serializers.py changed, reloading.
+2026-07-16 11:22:18,879 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 11:28:50,352 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\serializers.py changed, reloading.
+2026-07-16 11:29:06,395 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 11:30:34,492 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\serializers.py changed, reloading.
+2026-07-16 11:30:37,340 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-16 11:38:22,059 WARNING django.request Unauthorized: /api/accounts/register/
+2026-07-16 11:38:33,445 WARNING django.request Unauthorized: /api/accounts/register/
+2026-07-16 11:38:34,994 WARNING django.request Unauthorized: /api/accounts/register/
+2026-07-16 11:38:48,045 WARNING django.request Unauthorized: /api/accounts/register/
+2026-07-16 11:38:49,632 WARNING django.request Unauthorized: /api/accounts/register/
+2026-07-16 11:39:08,123 WARNING django.request Unauthorized: /api/accounts/register/
+2026-07-17 10:38:26,575 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 10:41:54,550 WARNING django.request Not Found: /favicon.ico
+2026-07-17 10:43:53,915 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-17 11:09:26,914 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-17 11:09:38,839 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 11:09:55,392 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\shifts\views.py changed, reloading.
+2026-07-17 11:10:00,622 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 11:11:18,128 WARNING django.request Unauthorized: /api/shifts/assignments/
+2026-07-17 11:11:33,891 WARNING django.request Unauthorized: /api/shifts/assignments/
+2026-07-17 11:11:48,580 WARNING django.request Unauthorized: /api/shifts/assignments/
+2026-07-17 11:55:53,987 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-17 12:24:12,718 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\config\settings\base.py changed, reloading.
+2026-07-17 12:24:19,462 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 12:25:51,708 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-17 12:25:53,632 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-17 12:26:05,197 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-17 12:26:05,399 WARNING django.request Unauthorized: /api/accounts/login/refresh/
+2026-07-17 12:31:06,744 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-17 12:31:06,776 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-17 12:39:55,816 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-17 12:40:02,145 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 12:42:07,902 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\config\urls.py changed, reloading.
+2026-07-17 12:42:14,266 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 12:46:12,222 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-17 12:46:17,350 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 12:47:14,941 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-17 12:47:22,572 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 12:49:15,331 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-17 12:49:21,749 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 12:51:51,435 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 12:53:50,647 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 13:11:03,739 ERROR django.request Internal Server Error: /api/payroll/payslips/generate/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 511, in dispatch
+    self.response = self.finalize_response(request, response, *args, **kwargs)
+                    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 423, in finalize_response
+    assert isinstance(response, HttpResponseBase), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected a `Response`, `HttpResponse` or `StreamingHttpResponse` to be returned from the view, but received a `<class 'NoneType'>`
+2026-07-17 13:13:27,555 WARNING django.request Not Found: /favicon.ico
+2026-07-17 13:17:09,555 ERROR django.request Internal Server Error: /api/payroll/payslips/generate/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 511, in dispatch
+    self.response = self.finalize_response(request, response, *args, **kwargs)
+                    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 423, in finalize_response
+    assert isinstance(response, HttpResponseBase), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected a `Response`, `HttpResponse` or `StreamingHttpResponse` to be returned from the view, but received a `<class 'NoneType'>`
+2026-07-17 13:58:36,615 ERROR django.request Internal Server Error: /api/payroll/payslips/generate/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 511, in dispatch
+    self.response = self.finalize_response(request, response, *args, **kwargs)
+                    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 423, in finalize_response
+    assert isinstance(response, HttpResponseBase), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected a `Response`, `HttpResponse` or `StreamingHttpResponse` to be returned from the view, but received a `<class 'NoneType'>`
+2026-07-17 14:15:41,430 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\models.py changed, reloading.
+2026-07-17 14:15:50,126 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 14:16:43,031 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-17 14:16:49,035 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 14:18:52,063 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\serializers.py changed, reloading.
+2026-07-17 14:18:58,445 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 14:19:32,496 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\services.py changed, reloading.
+2026-07-17 14:19:43,337 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 14:33:14,612 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\services.py changed, reloading.
+2026-07-17 14:33:21,646 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 14:38:32,327 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-17 14:38:32,327 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-17 14:38:32,327 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-17 14:38:32,327 WARNING django.request Unauthorized: /api/invoices/invoices/
+2026-07-17 14:38:32,357 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-17 14:38:32,363 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-17 14:38:32,395 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-17 14:38:32,426 WARNING django.request Unauthorized: /api/invoices/invoices/
+2026-07-17 14:39:14,983 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-17 15:58:06,196 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-17 15:58:06,200 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-17 15:58:06,218 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-17 15:58:06,236 WARNING django.request Unauthorized: /api/invoices/invoices/
+2026-07-17 15:58:06,272 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-17 15:58:06,282 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-17 15:58:06,297 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-17 15:58:06,325 WARNING django.request Unauthorized: /api/invoices/invoices/
+2026-07-17 16:00:39,249 WARNING django.request Bad Request: /api/staff/profiles/
+2026-07-17 16:00:55,230 WARNING django.request Bad Request: /api/accounts/register/
+2026-07-17 16:13:21,829 WARNING django.request Bad Request: /api/shifts/assignments/
+2026-07-17 16:16:12,275 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 16:16:12,289 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 16:16:12,319 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 16:16:12,749 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 16:16:12,770 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 16:16:12,778 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 16:16:57,172 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 16:16:57,187 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 16:16:57,231 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 16:16:57,538 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 16:16:57,540 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 16:16:57,561 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 16:17:13,593 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 16:17:13,615 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 16:17:13,672 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 16:17:14,090 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 16:17:14,190 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 16:17:14,220 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 16:19:12,929 ERROR django.request Internal Server Error: /api/payroll/payslips/generate/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 511, in dispatch
+    self.response = self.finalize_response(request, response, *args, **kwargs)
+                    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 423, in finalize_response
+    assert isinstance(response, HttpResponseBase), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected a `Response`, `HttpResponse` or `StreamingHttpResponse` to be returned from the view, but received a `<class 'NoneType'>`
+2026-07-17 16:19:28,815 ERROR django.request Internal Server Error: /api/payroll/payslips/generate/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 511, in dispatch
+    self.response = self.finalize_response(request, response, *args, **kwargs)
+                    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 423, in finalize_response
+    assert isinstance(response, HttpResponseBase), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected a `Response`, `HttpResponse` or `StreamingHttpResponse` to be returned from the view, but received a `<class 'NoneType'>`
+2026-07-17 17:39:04,092 WARNING django.request Unauthorized: /api/attendance/records/
+2026-07-17 17:39:04,132 WARNING django.request Unauthorized: /api/attendance/records/
+2026-07-17 17:44:38,307 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-17 17:44:38,458 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-17 17:44:47,484 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-17 17:44:47,657 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-17 17:44:56,683 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-17 17:44:56,960 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-17 17:46:44,104 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:46:44,111 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:46:44,152 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:46:44,586 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:46:44,590 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:46:44,612 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:46:56,977 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:46:56,984 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:46:56,991 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:46:57,557 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:46:57,578 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:46:57,701 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:47:03,930 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:47:03,934 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:47:03,956 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:47:04,368 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:47:04,417 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:47:04,527 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:47:13,003 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:47:13,017 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:47:13,072 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:47:13,419 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:47:13,461 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:47:13,520 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:57:17,026 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-17 17:57:29,950 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 17:57:56,956 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-17 17:58:02,386 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 17:58:15,880 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:58:15,880 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:58:15,881 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:58:16,513 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:58:16,534 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:58:16,645 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:58:28,166 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:58:28,198 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:58:28,227 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 17:58:28,714 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-17 17:58:28,716 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-17 17:58:28,888 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-17 18:00:41,616 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-17 18:00:47,908 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-17 18:05:51,806 ERROR django.request Internal Server Error: /api/payroll/payslips/generate/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py", line 104, in generate
+    eligible_employees = EmployeeProfile.objects.filter(
+        is_active=True, salary_structure__isnull=False
+    )
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 1495, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 1513, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 1523, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1648, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1680, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ~~~~~~~~~~~~~~~~~^
+        child,
+        ^^^^^^
+    ...<7 lines>...
+        update_join_types=update_join_types,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1528, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1335, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1813, in names_to_path
+    raise FieldError(
+    ...<2 lines>...
+    )
+django.core.exceptions.FieldError: Cannot resolve keyword 'salary_structure' into field. Choices are: allowances, created_at, date_employed, date_of_birth, deductions, documents, employee_number, employment_status, gender, height_cm, id, is_active, national_id, next_of_kin_name, next_of_kin_phone, payslips, photo, physical_address, reported_incidents, salary_structures, shift_assignments, site_assignments, updated_at, user, user_id
+2026-07-17 18:05:56,521 ERROR django.request Internal Server Error: /api/payroll/payslips/generate/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py", line 104, in generate
+    eligible_employees = EmployeeProfile.objects.filter(
+        is_active=True, salary_structure__isnull=False
+    )
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 1495, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 1513, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 1523, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1648, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1680, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ~~~~~~~~~~~~~~~~~^
+        child,
+        ^^^^^^
+    ...<7 lines>...
+        update_join_types=update_join_types,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1528, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1335, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1813, in names_to_path
+    raise FieldError(
+    ...<2 lines>...
+    )
+django.core.exceptions.FieldError: Cannot resolve keyword 'salary_structure' into field. Choices are: allowances, created_at, date_employed, date_of_birth, deductions, documents, employee_number, employment_status, gender, height_cm, id, is_active, national_id, next_of_kin_name, next_of_kin_phone, payslips, photo, physical_address, reported_incidents, salary_structures, shift_assignments, site_assignments, updated_at, user, user_id
+2026-07-17 18:05:57,954 ERROR django.request Internal Server Error: /api/payroll/payslips/generate/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py", line 104, in generate
+    eligible_employees = EmployeeProfile.objects.filter(
+        is_active=True, salary_structure__isnull=False
+    )
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 1495, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 1513, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 1523, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1648, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1680, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ~~~~~~~~~~~~~~~~~^
+        child,
+        ^^^^^^
+    ...<7 lines>...
+        update_join_types=update_join_types,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1528, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1335, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\sql\query.py", line 1813, in names_to_path
+    raise FieldError(
+    ...<2 lines>...
+    )
+django.core.exceptions.FieldError: Cannot resolve keyword 'salary_structure' into field. Choices are: allowances, created_at, date_employed, date_of_birth, deductions, documents, employee_number, employment_status, gender, height_cm, id, is_active, national_id, next_of_kin_name, next_of_kin_phone, payslips, photo, physical_address, reported_incidents, salary_structures, shift_assignments, site_assignments, updated_at, user, user_id
+2026-07-18 20:12:06,996 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-18 20:15:19,335 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\models.py changed, reloading.
+2026-07-18 20:15:21,287 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-18 20:17:00,617 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\serializers.py changed, reloading.
+2026-07-18 20:17:02,821 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-18 20:17:54,790 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\serializers.py changed, reloading.
+2026-07-18 20:17:57,343 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-18 20:18:26,068 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\serializers.py changed, reloading.
+2026-07-18 20:18:29,208 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-18 20:19:03,728 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-18 20:19:05,382 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-18 20:20:35,318 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-18 20:20:37,682 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-18 20:21:03,885 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\services.py changed, reloading.
+2026-07-18 20:21:06,616 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-18 20:25:17,116 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\models.py changed, reloading.
+2026-07-18 20:25:20,717 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-18 20:27:10,054 WARNING django.request Unauthorized: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-18 20:27:10,061 WARNING django.request Unauthorized: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-18 20:30:41,075 WARNING django.request Not Found: /favicon.ico
+2026-07-18 20:31:06,212 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-18 20:31:30,041 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-18 20:32:23,329 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 20:32:23,421 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 20:46:44,072 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 20:46:44,294 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 21:00:00,273 WARNING django.request Bad Request: /api/payroll/periods/
+2026-07-18 21:00:13,878 WARNING django.request Bad Request: /api/payroll/periods/
+2026-07-18 21:28:45,078 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-18 21:28:45,112 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-18 21:28:45,273 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-18 21:28:45,344 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-18 21:28:45,354 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-18 21:28:45,546 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-18 21:29:10,411 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-18 21:29:10,436 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-18 21:29:10,478 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-18 21:29:10,618 WARNING django.request Forbidden: /api/sites/sites/
+2026-07-18 21:29:10,620 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-18 21:29:10,674 WARNING django.request Forbidden: /api/invoices/invoices/
+2026-07-18 21:38:35,253 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:38:44,875 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:38:45,177 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:38:54,775 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:38:55,031 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:47:30,109 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:47:30,530 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:47:41,641 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:47:42,023 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:49:43,807 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 21:49:43,878 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 21:50:26,677 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 21:50:26,789 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 21:51:48,161 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:51:48,460 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:52:12,379 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:52:12,663 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-18 21:56:55,757 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 21:56:55,905 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 21:58:17,229 WARNING django.request Forbidden: /api/payroll/salary-structures/
+2026-07-18 23:32:11,697 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-18 23:32:11,725 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-18 23:32:11,741 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-18 23:32:11,762 WARNING django.request Unauthorized: /api/invoices/invoices/
+2026-07-18 23:32:11,795 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-18 23:32:11,809 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-18 23:32:11,823 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-18 23:32:11,840 WARNING django.request Unauthorized: /api/invoices/invoices/
+2026-07-18 23:40:06,691 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-18 23:40:11,898 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 00:02:49,920 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 00:02:50,640 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 00:03:00,668 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 00:03:01,217 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 00:03:15,583 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 00:03:16,204 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 00:06:09,558 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 00:06:10,073 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 00:23:11,642 WARNING django.request Not Found: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-19 00:23:12,169 WARNING django.request Not Found: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-19 00:23:28,682 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 00:23:29,244 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 01:19:36,756 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 01:19:37,795 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 01:23:06,251 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-19 01:23:10,100 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-19 01:23:46,011 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-19 01:23:55,517 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-19 01:23:55,722 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-19 01:25:48,077 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-19 01:25:48,293 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-19 01:29:37,794 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-19 01:29:42,394 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-19 01:29:42,595 WARNING django.request Forbidden: /api/staff/profiles/
+2026-07-19 01:30:23,839 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 01:30:24,413 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 01:30:41,231 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 01:30:41,799 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 01:34:23,277 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\views.py changed, reloading.
+2026-07-19 01:34:28,302 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 01:35:24,125 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 01:35:24,816 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 01:57:29,358 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-19 01:57:44,084 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 01:57:44,864 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 02:04:32,985 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 02:04:33,720 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 02:10:34,504 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\shifts\serializers.py changed, reloading.
+2026-07-19 02:10:38,958 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 02:11:07,714 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 02:11:11,546 WARNING django.request Forbidden: /api/shifts/shifts/
+2026-07-19 08:10:30,474 WARNING django.request Unauthorized: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-19 08:10:30,508 WARNING django.request Unauthorized: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-19 08:19:26,491 ERROR django.request Internal Server Error: /api/staff/profiles/3cb05fd8-f0cd-4d86-87bf-48cd3d76e3b8/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\mixins.py", line 91, in destroy
+    self.perform_destroy(instance)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\mixins.py", line 95, in perform_destroy
+    instance.delete()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\base.py", line 1280, in delete
+    collector.collect([self], keep_parents=keep_parents)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\deletion.py", line 350, in collect
+    raise ProtectedError(
+    ...<7 lines>...
+    )
+django.db.models.deletion.ProtectedError: ("Cannot delete some instances of model 'EmployeeProfile' because they are referenced through protected foreign keys: 'Payslip.employee'.", {<Payslip: Payslip: 1 — analystmufa@gmail.com - 2026-07-18 to 2026-07-18 (OPEN)>, <Payslip: Payslip: 1 — analystmufa@gmail.com - 2026-07-01 to 2026-07-31 (OPEN)>, <Payslip: Payslip: 1 — analystmufa@gmail.com - 2026-07-17 to 2026-07-17 (OPEN)>, <Payslip: Payslip: 1 — analystmufa@gmail.com - 2026-07-19 to 2026-07-19 (OPEN)>})
+2026-07-19 08:52:16,723 WARNING django.request Bad Request: /api/payroll/periods/
+2026-07-19 09:18:21,143 WARNING django.request Not Found: /favicon.ico
+2026-07-19 09:28:07,366 ERROR django.request Internal Server Error: /api/incidents/incidents/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\mixins.py", line 24, in perform_create
+    serializer.save()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\serializers.py", line 208, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\apps\incidents\serializers.py", line 33, in create
+    return super().create(validated_data)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\serializers.py", line 989, in create
+    instance = ModelClass._default_manager.create(**validated_data)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 665, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\apps\incidents\models.py", line 63, in save
+    self.full_clean()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\base.py", line 1679, in full_clean
+    raise ValidationError(errors)
+django.core.exceptions.ValidationError: {'__all__': ['An incident must have either a site or a shift_assignment (from which the site is derived).']}
+2026-07-19 09:28:29,294 ERROR django.request Internal Server Error: /api/incidents/incidents/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\mixins.py", line 24, in perform_create
+    serializer.save()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\serializers.py", line 208, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\apps\incidents\serializers.py", line 33, in create
+    return super().create(validated_data)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\rest_framework\serializers.py", line 989, in create
+    instance = ModelClass._default_manager.create(**validated_data)
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\query.py", line 665, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\security-guard-management\backend\apps\incidents\models.py", line 63, in save
+    self.full_clean()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\security-guard-management\backend\venv\Lib\site-packages\django\db\models\base.py", line 1679, in full_clean
+    raise ValidationError(errors)
+django.core.exceptions.ValidationError: {'__all__': ['An incident must have either a site or a shift_assignment (from which the site is derived).']}
+2026-07-19 09:33:08,433 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\incidents\serializers.py changed, reloading.
+2026-07-19 09:33:14,244 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 09:38:29,653 WARNING django.request Forbidden: /api/sites/sites/6d8cbb6f-a613-461f-a800-559c805941e0/
+2026-07-19 09:38:45,669 WARNING django.request Forbidden: /api/sites/sites/6d8cbb6f-a613-461f-a800-559c805941e0/
+2026-07-19 09:39:51,453 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-19 09:55:16,600 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-19 09:55:20,132 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 09:56:24,363 WARNING django.request Unauthorized: /api/payroll/periods/
+2026-07-19 09:56:24,425 WARNING django.request Unauthorized: /api/payroll/payslips/
+2026-07-19 09:56:24,440 WARNING django.request Unauthorized: /api/payroll/periods/
+2026-07-19 09:56:24,462 WARNING django.request Unauthorized: /api/payroll/payslips/
+2026-07-19 10:03:21,432 WARNING django.request Not Found: /admin/payroll/salarystructure/
+2026-07-19 10:03:21,629 WARNING django.request Not Found: /favicon.ico
+2026-07-19 10:04:58,558 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\admin.py changed, reloading.
+2026-07-19 10:05:04,603 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 10:16:21,256 WARNING django.request Unauthorized: /api/accounts/login/
+2026-07-19 11:03:34,700 WARNING django.request Unauthorized: /api/payroll/periods/
+2026-07-19 11:03:34,733 WARNING django.request Unauthorized: /api/payroll/payslips/
+2026-07-19 11:03:34,780 WARNING django.request Unauthorized: /api/payroll/periods/
+2026-07-19 11:03:34,817 WARNING django.request Unauthorized: /api/payroll/payslips/
+2026-07-19 11:03:35,033 WARNING django.request Unauthorized: /api/accounts/login/refresh/
+2026-07-19 11:11:40,796 WARNING django.request Forbidden: /api/payroll/periods/
+2026-07-19 11:11:40,993 WARNING django.request Forbidden: /api/payroll/periods/
+2026-07-19 11:40:20,322 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\views.py changed, reloading.
+2026-07-19 11:40:34,334 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 14:04:34,600 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-19 14:04:34,601 WARNING django.request Unauthorized: /api/sites/assignments/
+2026-07-19 14:04:34,601 WARNING django.request Unauthorized: /api/attendance/records/
+2026-07-19 14:04:34,645 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-19 14:04:34,665 WARNING django.request Unauthorized: /api/sites/assignments/
+2026-07-19 14:04:34,716 WARNING django.request Unauthorized: /api/attendance/records/
+2026-07-19 14:04:58,751 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-19 14:04:58,803 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-19 14:04:58,858 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-19 14:04:58,895 WARNING django.request Unauthorized: /api/invoices/invoices/
+2026-07-19 14:04:58,923 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-19 14:04:58,969 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-19 14:04:59,000 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-19 14:04:59,116 WARNING django.request Unauthorized: /api/invoices/invoices/
+2026-07-19 16:06:44,161 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-19 16:06:44,348 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-19 16:06:44,793 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-19 16:06:45,579 WARNING django.request Unauthorized: /api/invoices/invoices/
+2026-07-19 16:06:46,748 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-19 16:06:47,149 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-19 16:06:47,666 WARNING django.request Unauthorized: /api/incidents/incidents/
+2026-07-19 16:06:47,666 WARNING django.request Unauthorized: /api/invoices/invoices/
+2026-07-19 16:06:48,993 WARNING django.request Unauthorized: /api/accounts/login/refresh/
+2026-07-19 16:26:19,796 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-19 16:26:32,355 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:26:47,495 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\core\permissions.py changed, reloading.
+2026-07-19 16:26:53,243 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:27:24,583 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-19 16:27:31,081 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:27:37,407 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-19 16:27:42,974 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:29:38,575 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-19 16:29:43,682 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:31:37,882 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\payroll\views.py changed, reloading.
+2026-07-19 16:31:44,525 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:49:09,354 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\models.py changed, reloading.
+2026-07-19 16:49:15,573 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:50:02,036 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\serializers.py changed, reloading.
+2026-07-19 16:50:07,634 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:50:14,912 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\serializers.py changed, reloading.
+2026-07-19 16:50:18,421 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:50:36,033 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\serializers.py changed, reloading.
+2026-07-19 16:50:42,207 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:50:55,248 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\views.py changed, reloading.
+2026-07-19 16:51:01,732 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:51:22,571 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\views.py changed, reloading.
+2026-07-19 16:51:28,293 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:51:49,302 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\urls.py changed, reloading.
+2026-07-19 16:51:57,223 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:52:04,362 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\accounts\urls.py changed, reloading.
+2026-07-19 16:52:07,932 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 16:54:23,074 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\views.py changed, reloading.
+2026-07-19 16:54:30,188 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 17:05:38,284 WARNING django.request Not Found: /api/staff/profiles/87eb84c9-eae3-46ac-80b6-143c5f3d53b3/set-pin/
+2026-07-19 17:05:55,607 WARNING django.request Not Found: /api/staff/profiles/87eb84c9-eae3-46ac-80b6-143c5f3d53b3/set-pin/
+2026-07-19 17:06:04,832 WARNING django.request Not Found: /api/staff/profiles/87eb84c9-eae3-46ac-80b6-143c5f3d53b3/set-pin/
+2026-07-19 17:06:17,466 WARNING django.request Not Found: /api/staff/profiles/87eb84c9-eae3-46ac-80b6-143c5f3d53b3/set-pin/
+2026-07-19 17:08:40,259 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\views.py changed, reloading.
+2026-07-19 17:08:44,055 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 17:09:11,757 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\views.py changed, reloading.
+2026-07-19 17:09:18,364 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 17:09:22,486 WARNING django.request Unauthorized: /api/staff/profiles/87eb84c9-eae3-46ac-80b6-143c5f3d53b3/set-pin/
+2026-07-19 17:20:17,745 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\models.py changed, reloading.
+2026-07-19 17:20:23,515 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 17:20:49,022 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\models.py changed, reloading.
+2026-07-19 17:20:56,583 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 17:22:53,833 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\serializers.py changed, reloading.
+2026-07-19 17:22:59,319 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-19 17:29:11,660 WARNING django.request Bad Request: /api/accounts/pin-login/
+2026-07-19 17:35:42,146 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\attendance\views.py changed, reloading.
+2026-07-19 17:35:47,384 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-20 18:15:53,097 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-20 18:26:36,110 WARNING django.request Unauthorized: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-20 18:26:36,160 WARNING django.request Unauthorized: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-20 18:26:36,764 WARNING django.request Not Found: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-20 18:26:36,953 WARNING django.request Not Found: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-20 18:50:39,898 WARNING django.request Bad Request: /api/accounts/pin-login/
+2026-07-21 09:34:01,220 WARNING django.request Unauthorized: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-21 09:34:01,238 WARNING django.request Unauthorized: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-21 09:34:01,785 WARNING django.request Not Found: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-21 09:34:02,012 WARNING django.request Not Found: /api/payroll/payslips/50894de3-acbd-479f-8c60-3fb28718d224/
+2026-07-21 10:44:49,402 WARNING django.request Unauthorized: /api/attendance/records/
+2026-07-21 10:44:49,435 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-21 10:44:49,457 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-21 10:44:49,498 WARNING django.request Unauthorized: /api/attendance/records/
+2026-07-21 10:44:49,518 WARNING django.request Unauthorized: /api/sites/sites/
+2026-07-21 10:44:49,537 WARNING django.request Unauthorized: /api/staff/profiles/
+2026-07-21 11:23:25,790 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\apps\staff\serializers.py changed, reloading.
+2026-07-21 11:24:13,793 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-22 16:53:23,403 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-22 16:54:40,373 WARNING django.request Unauthorized: /api/staff/profiles/3cb05fd8-f0cd-4d86-87bf-48cd3d76e3b8/
+2026-07-22 16:54:40,384 WARNING django.request Unauthorized: /api/staff/profiles/3cb05fd8-f0cd-4d86-87bf-48cd3d76e3b8/
+2026-07-22 16:54:40,604 WARNING django.request Unauthorized: /api/accounts/login/refresh/
