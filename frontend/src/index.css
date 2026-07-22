@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Manrope", "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --color-crimecurb-navy: #1B2A6E;
+  --color-crimecurb-navy-dark: #101A47;
+  --color-crimecurb-red: #E31E24;
+  --color-crimecurb-canvas: #F7F8FA;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+}
