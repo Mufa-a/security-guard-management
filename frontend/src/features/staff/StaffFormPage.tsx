@@ -1,4 +1,5 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
@@ -196,7 +197,7 @@ export default function StaffFormPage() {
         await createEmployeeProfile({
           user: newUser.id,
           // Omit employee_number for guards — the backend auto-generates it.
-          employee_number: isCreatingGuard ? undefined : form.employee_number,
+          employee_number?: string;
           national_id: form.national_id,
           date_of_birth: form.date_of_birth || undefined,
           gender: form.gender,

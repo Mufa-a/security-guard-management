@@ -2,7 +2,14 @@ from .base import *
 from decouple import config, Csv
 
 DEBUG = False
+import dj_database_url
+import os
 
+DATABASES = {
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL")
+    )
+}
 # No default on purpose — production must set this explicitly or it fails loudly.
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 

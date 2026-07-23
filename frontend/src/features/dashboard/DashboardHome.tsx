@@ -143,7 +143,7 @@ export default function DashboardHome() {
       <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
         <div>
           <h1 className="font-display text-2xl font-bold text-slate-800">
-            Welcome back, {user?.first_name || user?.email?.split('@')[0]}
+            Welcome back, {user?.email?.split('@')[0]}
           </h1>
           <p className="text-sm text-slate-400 mt-0.5">Here's what's happening across your operations today.</p>
         </div>
@@ -179,8 +179,7 @@ function ManagementStats() {
     icon: React.ElementType;
     tone: Tone;
   }> = [
-    { key: 'guards', label: 'Active Guards', value: stats?.activeGuards, to: '/active-guards', icon: Users },
-    { key: 'sites', label: 'Active Sites', value: stats?.activeSites, to: '/sites', icon: MapPin, tone: 'default' },
+    { key: 'guards', label: 'Active Guards', value: stats?.activeGuards, to: '/staff', icon: Users, tone: 'default' },
     {
       key: 'incidents',
       label: 'Open Incidents',
@@ -205,7 +204,7 @@ function ManagementStats() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <OverviewPanel role={user?.role}>
+      <OverviewPanel role={user?.role ?? undefined}>
         {rows.map((row) => (
           <StatusRow
             key={row.key}
@@ -307,7 +306,7 @@ function GuardDashboard() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <OverviewPanel role={user?.role}>
+      <OverviewPanel role={user?.role ?? undefined}>
         <StatusRow
           icon={Clock}
           label="Today's Status"

@@ -1340,3 +1340,5 @@ django.core.exceptions.ValidationError: {'__all__': ['An incident must have eith
 2026-07-22 16:54:40,384 WARNING django.request Unauthorized: /api/staff/profiles/3cb05fd8-f0cd-4d86-87bf-48cd3d76e3b8/
 2026-07-22 16:54:40,604 WARNING django.request Unauthorized: /api/accounts/login/refresh/
 2026-07-22 18:35:25,536 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-22 19:03:04,244 WARNING django.request Unauthorized: /api/sites/clients/
+2026-07-22 19:03:04,277 WARNING django.request Unauthorized: /api/sites/clients/

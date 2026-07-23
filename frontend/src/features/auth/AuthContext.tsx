@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { login as loginApi, pinLogin as pinLoginApi } from './authApi';
 import type { LoginPayload, PinLoginPayload } from './authApi';
