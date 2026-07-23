@@ -134,7 +134,7 @@ export default function StaffFormPage() {
           first_name: p.user.first_name,
           last_name: p.user.last_name,
           phone_number: p.user.phone_number ?? '',
-          employee_number: p.employee_number,
+          employee_number: p.employee_number ?? '',
           national_id: p.national_id,
           date_of_birth: p.date_of_birth ?? '',
           gender: p.gender,
@@ -195,9 +195,9 @@ export default function StaffFormPage() {
         });
 
         await createEmployeeProfile({
-  user: newUser.id,
-  national_id: form.national_id,
-  date_of_birth: form.date_of_birth || undefined,
+          user: newUser.id,
+          national_id: form.national_id,
+          date_of_birth: form.date_of_birth || undefined,
           gender: form.gender,
           physical_address: form.physical_address,
           next_of_kin_name: form.next_of_kin_name,
