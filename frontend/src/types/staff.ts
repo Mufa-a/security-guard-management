@@ -41,7 +41,7 @@ export interface EmployeeProfile {
 
 export interface EmployeeProfileCreatePayload {
   user: string; // user id
-  employee_number: string;
+  employee_number?: string;
   national_id: string;
   date_of_birth?: string;
   gender?: string;
