@@ -81,15 +81,15 @@ export default function GuardDeploymentReportPage() {
     doc.setFontSize(10);
     doc.text(`Generated: ${new Date().toLocaleDateString('en-KE')}`, 14, 23);
 
-    autoTable(doc, {
-      startY: 32,
-      head: [['Employee #', 'Guard', 'Employment Status', 'Site', 'Deployed Since']],
-      body: rows.map((r) => [
-        r.employeeNumber, r.name, r.status, r.siteName ?? 'Unassigned', r.startDate ?? '—',
-      ]),
-      styles: { fontSize: 9, cellPadding: 3 },
-      headStyles: { fillColor: [27, 42, 110] },
-    });
+   autoTable(doc, {
+  startY: 32,
+  head: [['Employee #', 'Guard', 'Employment Status', 'Site', 'Deployed Since']],
+  body: rows.map((r) => [
+    r.employeeNumber ?? '—', r.name ?? '—', r.status ?? '—', r.siteName ?? 'Unassigned', r.startDate ?? '—',
+  ]),
+  styles: { fontSize: 9, cellPadding: 3 },
+  headStyles: { fillColor: [27, 42, 110] },
+});
 
     const pageHeight = doc.internal.pageSize.getHeight();
     doc.setFontSize(8);
