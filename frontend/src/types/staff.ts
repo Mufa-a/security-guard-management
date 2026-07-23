@@ -22,7 +22,7 @@ export interface EmployeeDocument {
 export interface EmployeeProfile {
   id: string;
   user: User;
-  employee_number: string;
+  employee_number?: string;
   national_id: string;
   date_of_birth: string | null;
   gender: string;

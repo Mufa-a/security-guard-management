@@ -1,4 +1,5 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
 import { getMyIncidents, createIncident } from '../../api/incidentsApi';
 import type { Incident } from '../../types/incidents';
 
