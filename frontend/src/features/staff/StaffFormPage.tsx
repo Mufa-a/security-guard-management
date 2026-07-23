@@ -195,11 +195,9 @@ export default function StaffFormPage() {
         });
 
         await createEmployeeProfile({
-          user: newUser.id,
-          // Omit employee_number for guards — the backend auto-generates it.
-          employee_number?: string;
-          national_id: form.national_id,
-          date_of_birth: form.date_of_birth || undefined,
+  user: newUser.id,
+  national_id: form.national_id,
+  date_of_birth: form.date_of_birth || undefined,
           gender: form.gender,
           physical_address: form.physical_address,
           next_of_kin_name: form.next_of_kin_name,
