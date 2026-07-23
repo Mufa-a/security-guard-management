@@ -5,7 +5,7 @@ import { getVisibleCategories } from './reportRegistry';
 
 export default function ReportsHub() {
   const { user } = useAuth();
-  const categories = getVisibleCategories(user?.role);
+  const categories = getVisibleCategories(user?.role ?? undefined);
 
   return (
     <div>

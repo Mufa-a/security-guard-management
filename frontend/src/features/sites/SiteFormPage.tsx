@@ -1,4 +1,5 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getClients } from '../../api/sitesApi';
 import { createSite, getSite, updateSite } from '../../api/sitesApi';

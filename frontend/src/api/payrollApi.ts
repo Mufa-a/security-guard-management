@@ -3,6 +3,7 @@ import type {
   PayrollPeriod,
   PayrollPeriodCreatePayload,
   Payslip,
+  PayslipStatus,
   GeneratePayslipsResponse,
   SalaryStructure,
   SalaryStructureCreatePayload,

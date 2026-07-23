@@ -1,4 +1,5 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Users, Wallet, Plus, ChevronRight, Clock, Trash2 } from 'lucide-react';
 import { getPayrollPeriods, createPayrollPeriod, getPayslips, deletePayrollPeriod } from '../../api/payrollApi';
