@@ -69,7 +69,6 @@ function validateEmployeeForm(
     return 'National ID must be between 7 and 9 digits.';
   }
   // Employee number is auto-assigned for guards — only required for everyone else.
-  if (!isGuard && !form.employee_number.trim()) return 'Employee number is required.';
   if (!form.gender) return 'Gender is required.';
   if (!form.physical_address.trim()) return 'Physical address is required.';
   if (!form.next_of_kin_name.trim()) return 'Next of kin name is required.';
@@ -392,21 +391,9 @@ export default function StaffFormPage() {
             <h2 className="text-sm font-semibold text-slate-500 uppercase">Employee Details</h2>
           </>
         )}
-
-        <div className="grid grid-cols-2 gap-4">
-          {!isCreatingGuard && (
-            <div>
-              <label className="block text-sm text-slate-700 mb-1">Employee Number</label>
-              <input
-                value={form.employee_number}
-                onChange={(e) => handleChange('employee_number', e.target.value)}
-                required
-                className="w-full px-3 py-2 rounded border border-slate-300"
-              />
-            </div>
-          )}
-          <div>
-            <label className="block text-sm text-slate-700 mb-1">National ID</label>
+         <div className="grid grid-cols-2 gap-4">
+  <div>
+    <label className="block text-sm text-slate-700 mb-1">National ID</label>
             <input
               value={form.national_id}
               onChange={(e) => handleDigitsChange('national_id', e.target.value, 9)}
@@ -419,11 +406,11 @@ export default function StaffFormPage() {
           </div>
         </div>
 
-        {isCreatingGuard && (
-          <p className="text-xs text-slate-400 -mt-2">
-            Employee number will be auto-assigned (e.g. GRD-004) once saved.
-          </p>
-        )}
+        {!isEditMode && (
+  <p className="text-xs text-slate-400 -mt-2">
+    Employee number will be auto-assigned (e.g. {isCreatingGuard ? 'GRD-004' : 'STF-004'}) once saved.
+  </p>
+)}
 
         <div className="grid grid-cols-2 gap-4">
           <div>
