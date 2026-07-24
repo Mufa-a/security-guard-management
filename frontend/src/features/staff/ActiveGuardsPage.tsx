@@ -49,9 +49,9 @@ export default function ActiveGuardsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <h1 className="text-2xl font-bold text-slate-800">Active Guards</h1>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between sm:justify-end gap-4">
           <span className="text-sm text-slate-500">{guards.length} active</span>
           <Link
             to="/staff/new?role=GUARD"
@@ -71,15 +71,15 @@ export default function ActiveGuardsPage() {
               key={g.id}
               className="bg-white rounded-tl-[32px] rounded-tr-2xl rounded-bl-2xl rounded-br-2xl shadow-sm border border-slate-100 p-5"
             >
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <p className="font-bold text-slate-800">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <div className="min-w-0">
+                  <p className="font-bold text-slate-800 truncate">
                     {g.user.first_name} {g.user.last_name}
                   </p>
                   <p className="text-xs text-slate-400">{g.employee_number}</p>
                 </div>
                 <span
-                  className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${
+                  className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 flex-shrink-0 ${
                     isOnDuty ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'
                   }`}
                 >
@@ -87,8 +87,8 @@ export default function ActiveGuardsPage() {
                 </span>
               </div>
               <div className="flex items-center gap-1.5 text-sm text-slate-500">
-                <MapPin size={14} />
-                {site ?? 'Not currently posted'}
+                <MapPin size={14} className="flex-shrink-0" />
+                <span className="truncate">{site ?? 'Not currently posted'}</span>
               </div>
             </div>
           );
