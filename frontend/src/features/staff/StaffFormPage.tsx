@@ -50,7 +50,7 @@ function validateEmployeeForm(
   form: EmployeeFormState,
   confirmPassword: string,
   isEditMode: boolean,
-  isGuard: boolean
+  _isGuard: boolean
 ): string | null {
   if (!isEditMode) {
     const pwError = validatePassword(form.password, confirmPassword);
