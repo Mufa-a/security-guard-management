@@ -141,24 +141,7 @@ LOGGING = {
     },
     'handlers': {
         'console': {'class': 'logging.StreamHandler', 'formatter': 'verbose'},
-        LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
     },
-
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-
     'loggers': {
         'django': {
             'handlers': ['console'],
@@ -166,7 +149,5 @@ LOGGING = {
             'propagate': False,
         },
     },
-}
-    },
-    'root': {'handlers': ['console', 'file'], 'level': 'INFO'},
+    'root': {'handlers': ['console'], 'level': 'INFO'},
 }
