@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getMe } from '../../api/accountsApi';
 import { getMyEmployeeProfile, changeMyPin } from '../../api/staffApi';
 import type { User, EmployeeProfile } from '../../types/staff';
@@ -13,7 +12,7 @@ export default function ProfilePage() {
   const [me, setMe] = useState<User | null>(null);
   const [employeeProfile, setEmployeeProfile] = useState<EmployeeProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  
 
   const [currentPin, setCurrentPin] = useState('');
   const [newPin, setNewPin] = useState('');

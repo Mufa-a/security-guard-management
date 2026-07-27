@@ -54,7 +54,7 @@ export default function ComplianceReportPage() {
       e.documents.forEach((d) => {
         rows.push({
           employeeName: `${e.user.first_name} ${e.user.last_name}`,
-          employeeNumber: e.employee_number,
+          employeeNumber: e.employee_number ?? "N/A",
           documentType: d.document_type,
           expiryDate: d.expiry_date,
           status: getDocStatus(d.expiry_date),
