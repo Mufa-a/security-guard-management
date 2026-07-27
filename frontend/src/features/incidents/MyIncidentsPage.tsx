@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { getMyIncidents, createIncident } from '../../api/incidentsApi';
+import { getMyShiftAssignments } from '../../api/shiftsApi';
 import type { Incident } from '../../types/incidents';
 
 const CATEGORIES = ['THEFT', 'TRESPASSING', 'VANDALISM', 'MEDICAL', 'FIRE', 'PROPERTY_DAMAGE', 'SUSPICIOUS_ACTIVITY', 'OTHER'];
@@ -11,6 +12,7 @@ export default function MyIncidentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentShiftAssignment, setCurrentShiftAssignment] = useState<string | undefined>(undefined);
   const [form, setForm] = useState({
     category: 'OTHER', severity: 'LOW', title: '', description: '', occurred_at: '',
   });
@@ -19,13 +21,40 @@ export default function MyIncidentsPage() {
     getMyIncidents().then(setIncidents).catch(() => setError('Failed to load incidents.'));
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+  load();
+
+  getMyShiftAssignments()
+    .then((assignments) => {
+      const today = new Date().toISOString().slice(0, 10);
+
+      const activeShift = assignments.find(
+        (a) => a.shift_date === today
+      );
+
+      if (activeShift) {
+        setCurrentShiftAssignment(activeShift.id);
+      }
+    })
+    .catch(() => {
+      setError('Failed to load shift assignment.');
+    });
+
+}, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await createIncident(form);
+      if (!currentShiftAssignment) {
+  setError('You are not assigned to an active shift.');
+  return;
+}
+
+await createIncident({
+  ...form,
+  shift_assignment: currentShiftAssignment,
+});
       setShowForm(false);
       setForm({ category: 'OTHER', severity: 'LOW', title: '', description: '', occurred_at: '' });
       load();
