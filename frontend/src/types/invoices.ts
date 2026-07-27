@@ -32,7 +32,6 @@ export interface Invoice {
 
 export interface InvoiceCreatePayload {
   client: string;
-  invoice_number: string;
   issue_date: string;
   due_date: string;
   status?: string;

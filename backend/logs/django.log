@@ -1342,3 +1342,15 @@ django.core.exceptions.ValidationError: {'__all__': ['An incident must have eith
 2026-07-22 18:35:25,536 INFO django.utils.autoreload Watching for file changes with StatReloader
 2026-07-22 19:03:04,244 WARNING django.request Unauthorized: /api/sites/clients/
 2026-07-22 19:03:04,277 WARNING django.request Unauthorized: /api/sites/clients/
+2026-07-27 12:07:53,915 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-27 12:07:59,509 WARNING django.request Unauthorized: /api/sites/clients/
+2026-07-27 12:07:59,535 WARNING django.request Unauthorized: /api/sites/clients/
+2026-07-27 12:08:04,122 WARNING django.request Not Found: /api/expenses/expenses/
+2026-07-27 12:08:04,159 WARNING django.request Not Found: /api/expenses/expenses/
+2026-07-27 12:08:17,677 WARNING django.request Not Found: /api/expenses/expenses/
+2026-07-27 12:08:17,712 WARNING django.request Not Found: /api/expenses/expenses/
+2026-07-27 12:13:27,868 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\config\settings\base.py changed, reloading.
+2026-07-27 12:13:37,477 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-27 12:13:57,757 INFO django.utils.autoreload C:\Users\Administrator\security-guard-management\backend\config\urls.py changed, reloading.
+2026-07-27 12:14:04,988 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-07-27 12:27:26,997 INFO django.utils.autoreload Watching for file changes with StatReloader

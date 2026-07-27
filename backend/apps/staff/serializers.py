@@ -72,9 +72,19 @@ class EmployeeProfileCreateSerializer(serializers.ModelSerializer):
         return f'{prefix}-{next_num:03d}'
 
     def create(self, validated_data):
+        user = validated_data.get('user')
+        role_name = getattr(getattr(user, 'role', None), 'name', None)
+
         if not validated_data.get('employee_number'):
-            user = validated_data.get('user')
-            role_name = getattr(getattr(user, 'role', None), 'name', None)
             prefix = 'GRD' if role_name == 'GUARD' else 'STF'
             validated_data['employee_number'] = self._generate_employee_number(prefix)
-        return super().create(validated_data)
+
+        employee = super().create(validated_data)
+
+        if role_name == 'GUARD':
+            national_id = validated_data.get('national_id', '')
+            default_pin = (national_id[-6:] if len(national_id) >= 6 else national_id.rjust(6, '0'))
+            employee.set_pin(default_pin, must_change=True)
+            employee.save(update_fields=['pin_hash', 'pin_attempts', 'pin_locked_until', 'pin_must_change'])
+
+        return employee

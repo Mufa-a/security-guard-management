@@ -38,6 +38,7 @@ class EmployeeProfile(BaseModel):
     pin_hash = models.CharField(max_length=255, blank=True, null=True)
     pin_attempts = models.PositiveSmallIntegerField(default=0)
     pin_locked_until = models.DateTimeField(null=True, blank=True)
+    pin_must_change = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.employee_number:
@@ -66,11 +67,11 @@ class EmployeeProfile(BaseModel):
     def __str__(self):
         return f"{self.employee_number} — {self.user.email}"
 
-    def set_pin(self, raw_pin):
-        """Hash and store a new PIN, clearing any lockout state."""
+    def set_pin(self, raw_pin, must_change=False):
         self.pin_hash = make_password(raw_pin)
         self.pin_attempts = 0
         self.pin_locked_until = None
+        self.pin_must_change = must_change
 
     def check_pin(self, raw_pin):
         if not self.pin_hash:

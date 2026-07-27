@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import { getMe } from '../../api/accountsApi';
 import { getMyEmployeeProfile, changeMyPin } from '../../api/staffApi';
 import type { User, EmployeeProfile } from '../../types/staff';
@@ -56,20 +55,13 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-md mx-auto">
+    <div>
       {error && <p className="text-red-600 mb-4">{error}</p>}
 
       {me && (
         <div>
           {/* hero */}
-          <div className="relative bg-gradient-to-b from-slate-950 to-black rounded-b-[32px] px-6 pt-6 pb-10 text-center">
-            <button
-              onClick={() => navigate(-1)}
-              aria-label="Go back"
-              className="absolute left-4 top-4 h-9 w-9 rounded-full bg-white/10 hover:bg-white/15 flex items-center justify-center text-white transition-colors"
-            >
-              <ArrowLeft size={18} />
-            </button>
+          <div className="relative bg-gradient-to-b from-slate-950 to-black rounded-b-[32px] px-6 pt-6 pb-8 text-center">
 
             <div className="mx-auto h-20 w-20 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center mb-4">
               <span className="text-white font-semibold text-xl">
@@ -91,21 +83,18 @@ export default function ProfilePage() {
                 </p>
               </div>
             )}
-          </div>
 
-          {/* details */}
-          <div className="bg-white border border-slate-200 mt-4 p-5 space-y-3">
-            <div>
-              <span className="text-slate-500 text-xs font-mono uppercase tracking-wide">Email</span>
-              <p className="font-medium text-slate-800">{me.email}</p>
-            </div>
-            <div>
-              <span className="text-slate-500 text-xs font-mono uppercase tracking-wide">Phone</span>
-              <p className="font-medium text-slate-800">{me.phone_number || '—'}</p>
-            </div>
-            <div>
-              <span className="text-slate-500 text-xs font-mono uppercase tracking-wide">Role</span>
-              <p className="font-medium text-slate-800">{me.role}</p>
+            {/* details — same centered style as the fields above */}
+            <div className="mt-6 space-y-4">
+              <p className="text-white font-mono text-lg font-semibold tracking-wide">
+                {me.email}
+              </p>
+              <p className="text-white font-mono text-lg font-semibold tracking-wide">
+                {me.phone_number || '—'}
+              </p>
+              <p className="text-slate-400 font-mono text-base uppercase tracking-widest">
+                {me.role}
+              </p>
             </div>
           </div>
 

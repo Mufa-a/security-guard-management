@@ -21,7 +21,7 @@ export default function InvoiceFormPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState({
-    client: '', invoice_number: '', issue_date: '', due_date: '', status: 'DRAFT', notes: '',
+    client: '', issue_date: '', due_date: '', status: 'DRAFT', notes: '',
   });
 
   const [lineItem, setLineItem] = useState({ description: '', quantity: '1', unit_price: '' });
@@ -36,7 +36,7 @@ export default function InvoiceFormPage() {
     getInvoice(invoiceId).then((inv) => {
       setInvoice(inv);
       setForm({
-        client: inv.client, invoice_number: inv.invoice_number, issue_date: inv.issue_date,
+        client: inv.client, issue_date: inv.issue_date,
         due_date: inv.due_date, status: inv.status, notes: inv.notes,
       });
     });
@@ -116,16 +116,17 @@ export default function InvoiceFormPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-slate-700 mb-1">Invoice Number</label>
-            <input
-              value={form.invoice_number}
-              onChange={(e) => handleChange('invoice_number', e.target.value)}
-              required
-              className="w-full px-3 py-2 rounded border border-slate-300"
-            />
-          </div>
-          <div>
+          {isEditMode && invoice && (
+            <div>
+              <label className="block text-sm text-slate-700 mb-1">Invoice Number</label>
+              <input
+                value={invoice.invoice_number}
+                disabled
+                className="w-full px-3 py-2 rounded border border-slate-300 bg-slate-50 text-slate-500"
+              />
+            </div>
+          )}
+          <div className={isEditMode ? '' : 'col-span-2'}>
             <label className="block text-sm text-slate-700 mb-1">Status</label>
             <select
               value={form.status}
@@ -137,7 +138,7 @@ export default function InvoiceFormPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm text-slate-700 mb-1">Issue Date</label>
             <input
@@ -185,7 +186,7 @@ export default function InvoiceFormPage() {
           <h2 className="text-lg font-bold text-slate-800 mb-3">Line Items</h2>
           {lineItemError && <p className="text-red-600 text-sm mb-2">{lineItemError}</p>}
 
-          <div className="bg-white rounded-lg shadow p-4 mb-4 grid grid-cols-4 gap-3">
+          <div className="bg-white rounded-lg shadow p-4 mb-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
             <input
               placeholder="Description"
               value={lineItem.description}

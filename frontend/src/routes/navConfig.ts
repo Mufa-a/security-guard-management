@@ -21,6 +21,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Shifts', path: '/shifts', roles: ['ADMIN', 'SUPERVISOR'] },
   { label: 'Attendance', path: '/attendance', roles: ['ADMIN', 'SUPERVISOR'] },
   { label: 'Incidents', path: '/incidents', roles: ['ADMIN', 'SUPERVISOR'] },
+  { label: 'Expenses', path: '/expenses', roles: ['ADMIN', 'MANAGER', 'SUPERVISOR'] },
 
   // Director only
   { label: 'Payroll', path: '/payroll', roles: ['ADMIN'] },

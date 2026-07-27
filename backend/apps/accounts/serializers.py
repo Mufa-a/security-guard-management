@@ -59,6 +59,14 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token["role"] = user.role.name if user.role else None
         return token
 
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        if self.user.role and self.user.role.name == "GUARD":
+            raise serializers.ValidationError(
+                "Guards must log in using their employee number and PIN, not email and password."
+            )
+        return data
+
 
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()

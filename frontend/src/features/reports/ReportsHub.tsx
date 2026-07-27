@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Lock } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
@@ -6,6 +7,29 @@ import { getVisibleCategories } from './reportRegistry';
 export default function ReportsHub() {
   const { user } = useAuth();
   const categories = getVisibleCategories(user?.role ?? undefined);
+
+  const hasRestoredScroll = useRef(false);
+
+  useEffect(() => {
+    const mainEl = document.querySelector('main');
+    if (!mainEl) return;
+
+    if (!hasRestoredScroll.current) {
+      const saved = sessionStorage.getItem('scroll:/reports');
+      if (saved) {
+        requestAnimationFrame(() => {
+          mainEl.scrollTop = parseInt(saved, 10);
+        });
+      }
+      hasRestoredScroll.current = true;
+    }
+
+    function handleScroll() {
+      sessionStorage.setItem('scroll:/reports', String(mainEl!.scrollTop));
+    }
+    mainEl.addEventListener('scroll', handleScroll);
+    return () => mainEl.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div>

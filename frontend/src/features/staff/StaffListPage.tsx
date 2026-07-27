@@ -21,7 +21,7 @@ export default function StaffListPage() {
   const [profiles, setProfiles] = useState<EmployeeProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<StaffTab>('GUARDS');
+  const [activeTab] = useState<StaffTab>('MANAGEMENT');
 
   function load() {
     getEmployeeProfiles()
@@ -58,24 +58,6 @@ export default function StaffListPage() {
         </Link>
       </div>
 
-      <div className="flex gap-2 mb-6">
-        <button
-          onClick={() => setActiveTab('GUARDS')}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-            activeTab === 'GUARDS' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-          }`}
-        >
-          Guards ({guards.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('MANAGEMENT')}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-            activeTab === 'MANAGEMENT' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-          }`}
-        >
-          Management ({management.length})
-        </button>
-      </div>
 
       {isLoading && <p className="text-slate-500">Loading...</p>}
       {error && <p className="text-red-600 mb-4">{error}</p>}

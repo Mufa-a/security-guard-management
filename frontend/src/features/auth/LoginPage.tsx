@@ -31,8 +31,14 @@ export default function LoginPage() {
       }
       navigate('/dashboard');
     } catch (err: any) {
+      const backendMessage =
+        err?.response?.data?.detail ||
+        (Array.isArray(err?.response?.data?.non_field_errors) ? err.response.data.non_field_errors[0] : null);
+
       if (err?.response?.status === 423) {
         setError('Too many failed attempts. Try again in a few minutes.');
+      } else if (backendMessage) {
+        setError(backendMessage);
       } else if (mode === 'password') {
         setError('Invalid email or password.');
       } else {

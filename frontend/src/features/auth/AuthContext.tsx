@@ -20,8 +20,10 @@ interface AuthUser {
 interface AuthContextType {
   user: AuthUser | null;
   isAuthenticated: boolean;
+  pinMustChange: boolean;
   login: (payload: LoginPayload) => Promise<void>;
   pinLogin: (payload: PinLoginPayload) => Promise<void>;
+  clearPinMustChange: () => void;
   logout: () => void;
   isLoading: boolean;
 }
@@ -33,15 +35,19 @@ function decodeUser(token: string): AuthUser {
   return { id: decoded.user_id, email: decoded.email, role: decoded.role };
 }
 
+const PIN_MUST_CHANGE_KEY = 'pin_must_change';
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [pinMustChange, setPinMustChange] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (token) {
       try {
         setUser(decodeUser(token));
+        setPinMustChange(localStorage.getItem(PIN_MUST_CHANGE_KEY) === 'true');
       } catch {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
@@ -54,24 +60,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { access, refresh } = await loginApi(payload);
     localStorage.setItem('access_token', access);
     localStorage.setItem('refresh_token', refresh);
+    localStorage.removeItem(PIN_MUST_CHANGE_KEY);
+    setPinMustChange(false);
     setUser(decodeUser(access));
   }
 
   async function pinLogin(payload: PinLoginPayload) {
-    const { access, refresh } = await pinLoginApi(payload);
+    const { access, refresh, pin_must_change } = await pinLoginApi(payload);
     localStorage.setItem('access_token', access);
     localStorage.setItem('refresh_token', refresh);
+    if (pin_must_change) {
+      localStorage.setItem(PIN_MUST_CHANGE_KEY, 'true');
+      setPinMustChange(true);
+    } else {
+      localStorage.removeItem(PIN_MUST_CHANGE_KEY);
+      setPinMustChange(false);
+    }
     setUser(decodeUser(access));
+  }
+
+  function clearPinMustChange() {
+    localStorage.removeItem(PIN_MUST_CHANGE_KEY);
+    setPinMustChange(false);
   }
 
   function logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem(PIN_MUST_CHANGE_KEY);
     setUser(null);
+    setPinMustChange(false);
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, pinLogin, logout, isLoading }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated: !!user, pinMustChange, login, pinLogin, clearPinMustChange, logout, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

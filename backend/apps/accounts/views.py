@@ -114,6 +114,12 @@ class PinLoginView(APIView):
         if not employee.user.is_active:
             return Response({'detail': 'This account is inactive.'}, status=status.HTTP_403_FORBIDDEN)
 
+        if not employee.user.role or employee.user.role.name != 'GUARD':
+            return Response(
+                {'detail': 'PIN login is only available for guards.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if not employee.check_pin(pin):
             employee.pin_attempts += 1
             if employee.pin_attempts >= 5:
@@ -126,4 +132,8 @@ class PinLoginView(APIView):
         employee.save(update_fields=['pin_attempts', 'pin_locked_until'])
 
         token = CustomTokenObtainPairSerializer.get_token(employee.user)
-        return Response({'access': str(token.access_token), 'refresh': str(token)})
+        return Response({
+            'access': str(token.access_token),
+            'refresh': str(token),
+            'pin_must_change': employee.pin_must_change,
+        })

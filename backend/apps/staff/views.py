@@ -75,13 +75,13 @@ class EmployeeProfileViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], url_path='set-pin', permission_classes=[permissions.IsAuthenticated, IsAdmin])
     def set_pin(self, request, pk=None):
-        """Admin sets or resets a guard's PIN."""
+        """Admin sets or resets a guard's PIN — guard must change it on next login."""
         employee = self.get_object()
         pin = request.data.get('pin', '')
         if not (pin.isdigit() and len(pin) == 6):
             return Response({'detail': 'PIN must be exactly 6 digits.'}, status=400)
-        employee.set_pin(pin)
-        employee.save(update_fields=['pin_hash', 'pin_attempts', 'pin_locked_until'])
+        employee.set_pin(pin, must_change=True)
+        employee.save(update_fields=['pin_hash', 'pin_attempts', 'pin_locked_until', 'pin_must_change'])
         return Response({'detail': 'PIN set successfully.'})
 
     @action(detail=False, methods=['post'], url_path='change-my-pin', permission_classes=[permissions.IsAuthenticated])
@@ -100,8 +100,8 @@ class EmployeeProfileViewSet(viewsets.ModelViewSet):
         if not (new_pin.isdigit() and len(new_pin) == 6):
             return Response({'detail': 'New PIN must be exactly 6 digits.'}, status=400)
 
-        employee.set_pin(new_pin)
-        employee.save(update_fields=['pin_hash', 'pin_attempts', 'pin_locked_until'])
+        employee.set_pin(new_pin, must_change=False)
+        employee.save(update_fields=['pin_hash', 'pin_attempts', 'pin_locked_until', 'pin_must_change'])
         return Response({'detail': 'PIN changed successfully.'})
 
 

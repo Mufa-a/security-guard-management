@@ -8,10 +8,14 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, pinMustChange } = useAuth();
 
   if (isLoading) return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
+
+  // A guard who hasn't set their own PIN yet is locked out of every
+  // route except the forced-change page itself.
+  if (pinMustChange) return <Navigate to="/set-pin" replace />;
 
   if (allowedRoles && (!user?.role || !allowedRoles.includes(user.role))) {
     return <Navigate to="/dashboard" replace />;

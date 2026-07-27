@@ -13,6 +13,7 @@ export interface PinLoginPayload {
 export interface LoginResponse {
   access: string;
   refresh: string;
+  pin_must_change?: boolean;
 }
 
 export async function login(payload: LoginPayload): Promise<LoginResponse> {

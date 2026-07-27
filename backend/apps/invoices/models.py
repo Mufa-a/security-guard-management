@@ -12,7 +12,7 @@ class Invoice(BaseModel):
         CANCELLED = "CANCELLED", "Cancelled"
 
     client = models.ForeignKey('sites.Client', on_delete=models.PROTECT, related_name='invoices')
-    invoice_number = models.CharField(max_length=30, unique=True)
+    invoice_number = models.CharField(max_length=30, unique=True, blank=True)
     issue_date = models.DateField()
     due_date = models.DateField()
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.DRAFT)
@@ -20,6 +20,25 @@ class Invoice(BaseModel):
 
     class Meta:
         ordering = ['-issue_date']
+
+    def save(self, *args, **kwargs):
+        if not self.invoice_number:
+            self.invoice_number = self._generate_invoice_number()
+        super().save(*args, **kwargs)
+
+    def _generate_invoice_number(self):
+        last = (
+            Invoice.objects.filter(invoice_number__startswith='INV-')
+            .order_by('-invoice_number')
+            .first()
+        )
+        last_num = 0
+        if last:
+            try:
+                last_num = int(last.invoice_number.split('-')[-1])
+            except (ValueError, IndexError):
+                last_num = 0
+        return f'INV-{last_num + 1:03d}'
 
     @property
     def subtotal(self):
