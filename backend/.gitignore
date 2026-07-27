@@ -1,0 +1,7 @@
+backend/db.sqlite3
+backend/logs/
+backend/curl
+backend/.env
+backend/venv/
+__pycache__/
+*.pyc
