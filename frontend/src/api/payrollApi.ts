@@ -98,3 +98,8 @@ export async function deleteAllowance(id: string): Promise<void> {
 export async function deleteDeduction(id: string): Promise<void> {
   await apiClient.delete(`/payroll/deductions/${id}/`);
 }
+
+export async function closePayrollPeriod(id: string): Promise<PayrollPeriod> {
+  const { data } = await apiClient.post(`/payroll/periods/${id}/close/`);
+  return data;
+}

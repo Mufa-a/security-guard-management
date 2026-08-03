@@ -30,16 +30,7 @@ const FREQUENCIES: PaymentFrequency[] = ['MONTHLY', 'WEEKLY', 'BI_WEEKLY'];
 const ALLOWANCE_TYPES = ['HOUSING', 'TRANSPORT', 'MEDICAL', 'COMMISSION', 'OTHER'];
 const DEDUCTION_TYPES = ['LOAN', 'UNIFORM', 'DISCIPLINARY', 'OTHER'];
 
-type Tab = 'overview' | 'allowances' | 'deductions' | 'history';
-
-function getCurrentStructure(structures: SalaryStructure[]): SalaryStructure | null {
-  const today = new Date().toISOString().slice(0, 10);
-  const active = structures.filter(
-    (s) => s.is_active && s.effective_from <= today && (!s.effective_to || s.effective_to >= today)
-  );
-  if (active.length === 0) return null;
-  return active.reduce((latest, s) => (s.effective_from > latest.effective_from ? s : latest));
-}
+type Tab = 'overview' | 'allowances' | 'deductions';
 
 export default function EmployeeSalaryPage() {
   const { id } = useParams();
@@ -50,7 +41,7 @@ export default function EmployeeSalaryPage() {
   const isAdmin = user?.role === 'ADMIN';
 
   const [employee, setEmployee] = useState<EmployeeProfile | null>(null);
-  const [structures, setStructures] = useState<SalaryStructure[]>([]);
+  const [current, setCurrent] = useState<SalaryStructure | null>(null);
   const [allowances, setAllowances] = useState<Allowance[]>([]);
   const [deductions, setDeductions] = useState<Deduction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,7 +57,7 @@ export default function EmployeeSalaryPage() {
       getDeductions(id),
     ]).then(([empR, structR, allowR, dedR]) => {
       if (empR.status === 'fulfilled') setEmployee(empR.value);
-      if (structR.status === 'fulfilled') setStructures(structR.value);
+      if (structR.status === 'fulfilled') setCurrent(structR.value[0] ?? null);
       if (allowR.status === 'fulfilled') setAllowances(allowR.value);
       if (dedR.status === 'fulfilled') setDeductions(dedR.value);
 
@@ -94,8 +85,6 @@ export default function EmployeeSalaryPage() {
   }
 
   if (isLoading) return <p className="text-slate-500">Loading...</p>;
-
-  const current = getCurrentStructure(structures);
 
   return (
     <div className="max-w-3xl">
@@ -132,7 +121,7 @@ export default function EmployeeSalaryPage() {
 
       {/* Section tabs */}
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
-        {(['overview', 'allowances', 'deductions', 'history'] as Tab[]).map((tab) => (
+        {(['overview', 'allowances', 'deductions'] as Tab[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -174,7 +163,6 @@ export default function EmployeeSalaryPage() {
           isAdmin={isAdmin}
         />
       )}
-      {activeTab === 'history' && <HistorySection structures={structures} />}
     </div>
   );
 }
@@ -188,15 +176,22 @@ function OverviewSection({
   current: SalaryStructure | null;
   onSaved: () => void;
 }) {
-  const [showForm, setShowForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
-    basic_salary: '',
-    payment_frequency: 'MONTHLY' as PaymentFrequency,
-    effective_from: new Date().toISOString().slice(0, 10),
-    overtime_rate: '',
+    basic_salary: current?.basic_salary ?? '',
+    payment_frequency: (current?.payment_frequency ?? 'MONTHLY') as PaymentFrequency,
+    overtime_rate: current?.overtime_rate ?? '',
   });
+
+  useEffect(() => {
+    setForm({
+      basic_salary: current?.basic_salary ?? '',
+      payment_frequency: (current?.payment_frequency ?? 'MONTHLY') as PaymentFrequency,
+      overtime_rate: current?.overtime_rate ?? '',
+    });
+  }, [current]);
 
   function handleChange(field: keyof typeof form, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -211,20 +206,13 @@ function OverviewSection({
         employee: employeeId,
         basic_salary: form.basic_salary,
         payment_frequency: form.payment_frequency,
-        effective_from: form.effective_from,
         overtime_rate: form.overtime_rate || undefined,
       });
-      setShowForm(false);
-      setForm({
-        basic_salary: '',
-        payment_frequency: 'MONTHLY',
-        effective_from: new Date().toISOString().slice(0, 10),
-        overtime_rate: '',
-      });
+      setIsEditing(false);
       onSaved();
     } catch (err) {
       console.error(err);
-      setError('Failed to save salary structure.');
+      setError('Failed to save salary.');
     } finally {
       setIsSubmitting(false);
     }
@@ -232,32 +220,30 @@ function OverviewSection({
 
   return (
     <div>
-      <div className="bg-white rounded-lg shadow p-6 mb-4">
-        {current ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs text-slate-400 uppercase mb-1">Basic Salary</p>
-              <p className="text-2xl font-bold text-blue-900">{formatKES(current.basic_salary)}</p>
+      {!isEditing && (
+        <div className="bg-white rounded-lg shadow p-6 mb-4">
+          {current ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs text-slate-400 uppercase mb-1">Basic Salary</p>
+                <p className="text-2xl font-bold text-blue-900">{formatKES(current.basic_salary)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400 uppercase mb-1">Payment Frequency</p>
+                <p className="font-medium text-slate-800">{current.payment_frequency}</p>
+              </div>
+              {current.overtime_rate && (
+                <div>
+                  <p className="text-xs text-slate-400 uppercase mb-1">Overtime Rate</p>
+                  <p className="font-medium text-slate-800">{formatKES(current.overtime_rate)}</p>
+                </div>
+              )}
             </div>
-            <div>
-              <p className="text-xs text-slate-400 uppercase mb-1">Payment Frequency</p>
-              <p className="font-medium text-slate-800">{current.payment_frequency}</p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-400 uppercase mb-1">Effective From</p>
-              <p className="font-medium text-slate-800">{current.effective_from}</p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-400 uppercase mb-1">Status</p>
-              <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
-                Active
-              </span>
-            </div>
-          </div>
-        ) : (
-          <p className="text-slate-400">No active salary structure set for this employee.</p>
-        )}
-      </div>
+          ) : (
+            <p className="text-slate-400">No salary set for this employee.</p>
+          )}
+        </div>
+      )}
 
       {error && (
         <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-4 border border-red-200">
@@ -265,20 +251,17 @@ function OverviewSection({
         </p>
       )}
 
-      {!showForm && (
+      {!isEditing && (
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => setIsEditing(true)}
           className="bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
         >
-          {current ? 'Update Salary' : 'Set Salary'}
+          {current ? 'Edit Salary' : 'Set Salary'}
         </button>
       )}
 
-      {showForm && (
+      {isEditing && (
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
-          <p className="text-sm text-slate-500">
-            Saving a new salary automatically closes out the previous one — history is preserved.
-          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm text-slate-700 mb-1">Basic Salary (KES)</label>
@@ -303,26 +286,14 @@ function OverviewSection({
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-slate-700 mb-1">Effective From</label>
-              <input
-                type="date"
-                value={form.effective_from}
-                onChange={(e) => handleChange('effective_from', e.target.value)}
-                required
-                className="w-full px-3 py-2 rounded border border-slate-300"
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-slate-700 mb-1">Overtime Rate (optional)</label>
-              <input
-                type="number"
-                value={form.overtime_rate}
-                onChange={(e) => handleChange('overtime_rate', e.target.value)}
-                className="w-full px-3 py-2 rounded border border-slate-300"
-              />
-            </div>
+          <div>
+            <label className="block text-sm text-slate-700 mb-1">Overtime Rate (optional)</label>
+            <input
+              type="number"
+              value={form.overtime_rate}
+              onChange={(e) => handleChange('overtime_rate', e.target.value)}
+              className="w-full sm:w-1/2 px-3 py-2 rounded border border-slate-300"
+            />
           </div>
           <div className="flex gap-3">
             <button
@@ -334,7 +305,7 @@ function OverviewSection({
             </button>
             <button
               type="button"
-              onClick={() => setShowForm(false)}
+              onClick={() => setIsEditing(false)}
               className="text-slate-600 hover:text-slate-800 px-5 py-2"
             >
               Cancel
@@ -557,46 +528,6 @@ function AllowanceDeductionSection({
           </div>
         </form>
       )}
-    </div>
-  );
-}
-
-function HistorySection({ structures }: { structures: SalaryStructure[] }) {
-  const sorted = [...structures].sort((a, b) => b.effective_from.localeCompare(a.effective_from));
-
-  return (
-    <div className="bg-white rounded-lg shadow overflow-x-auto">
-      <table className="w-full text-sm text-left whitespace-nowrap">
-        <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
-          <tr>
-            <th className="px-4 py-3">Basic Salary</th>
-            <th className="px-4 py-3">Frequency</th>
-            <th className="px-4 py-3">Effective From</th>
-            <th className="px-4 py-3">Effective To</th>
-            <th className="px-4 py-3">Overtime Rate</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((s) => (
-            <tr key={s.id} className="border-t border-slate-100">
-              <td className="px-4 py-3 font-medium text-slate-800">{formatKES(s.basic_salary)}</td>
-              <td className="px-4 py-3 text-slate-500">{s.payment_frequency}</td>
-              <td className="px-4 py-3 text-slate-500">{s.effective_from}</td>
-              <td className="px-4 py-3 text-slate-500">{s.effective_to ?? 'Current'}</td>
-              <td className="px-4 py-3 text-slate-500">
-                {s.overtime_rate ? formatKES(s.overtime_rate) : '—'}
-              </td>
-            </tr>
-          ))}
-          {sorted.length === 0 && (
-            <tr>
-              <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
-                No salary history yet.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
     </div>
   );
 }

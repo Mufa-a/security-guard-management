@@ -21,6 +21,30 @@ class PayrollPeriodViewSet(viewsets.ModelViewSet):
     serializer_class = PayrollPeriodSerializer
     permission_classes = [PayrollPeriodPermission]
 
+    @action(detail=True, methods=['post'], url_path='close')
+    def close(self, request, pk=None):
+        if request.user.role.name != 'ADMIN':
+            return Response(
+                {'detail': 'Only admins can close a payroll period.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        period = self.get_object()
+
+        if period.status == PayrollPeriod.Status.CLOSED:
+            return Response({'detail': 'Period is already closed.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        draft_count = period.payslips.filter(status='DRAFT').count()
+        if draft_count > 0:
+            return Response(
+                {'detail': f'{draft_count} payslip(s) in this period are still in DRAFT status. Approve or resolve them before closing.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        period.status = PayrollPeriod.Status.CLOSED
+        period.save()
+        return Response(PayrollPeriodSerializer(period).data)
+
 
 class SalaryStructureViewSet(viewsets.ModelViewSet):
     queryset = SalaryStructure.objects.select_related('employee__user').all()
@@ -68,21 +92,16 @@ class PayslipViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        user = self.request.user
-        if user.role.name in ('ADMIN', 'MANAGER'):
+        role_name = self.request.user.role.name
+        if role_name in ('ADMIN', 'MANAGER'):
             return qs
-        return qs.filter(employee__user=user)
+        return qs.none()  # SUPERVISOR and GUARD: see nothing
         # Everyone else (MANAGER included): only ever see their own
         # payslips, at the queryset level too — has_object_permission
         # alone isn't enough to stop them enumerating other employees'
         # payslip IDs via list().
         return qs.filter(employee__user=user)
 
-    @action(detail=False, methods=['get'], url_path='my-payslips')
-    def my_payslips(self, request):
-        qs = self.get_queryset().filter(employee__user=request.user)
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
 
     @action(detail=False, methods=['post'], url_path='generate')
     def generate(self, request):

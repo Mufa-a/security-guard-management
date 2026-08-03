@@ -14,6 +14,11 @@ export interface LoginResponse {
   access: string;
   refresh: string;
   pin_must_change?: boolean;
+  policy_accepted: boolean;
+}
+
+export interface AcceptPolicyResponse {
+  policy_accepted: boolean;
 }
 
 export async function login(payload: LoginPayload): Promise<LoginResponse> {
@@ -23,5 +28,10 @@ export async function login(payload: LoginPayload): Promise<LoginResponse> {
 
 export async function pinLogin(payload: PinLoginPayload): Promise<LoginResponse> {
   const response = await apiClient.post<LoginResponse>('/accounts/pin-login/', payload);
+  return response.data;
+}
+
+export async function acceptPolicy(): Promise<AcceptPolicyResponse> {
+  const response = await apiClient.post<AcceptPolicyResponse>('/accounts/accept-policy/', {});
   return response.data;
 }

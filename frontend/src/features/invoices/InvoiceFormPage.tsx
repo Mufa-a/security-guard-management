@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import { Receipt } from 'lucide-react';
 import { getClients } from '../../api/sitesApi';
-import {
-  createInvoice, getInvoice, updateInvoice, createLineItem, deleteLineItem,
-} from '../../api/invoicesApi';
+import { createInvoice, getInvoice, updateInvoice } from '../../api/invoicesApi';
 import type { Client } from '../../types/sites';
 import type { Invoice } from '../../types/invoices';
 
@@ -23,9 +22,6 @@ export default function InvoiceFormPage() {
   const [form, setForm] = useState({
     client: '', issue_date: '', due_date: '', status: 'DRAFT', notes: '',
   });
-
-  const [lineItem, setLineItem] = useState({ description: '', quantity: '1', unit_price: '' });
-  const [lineItemError, setLineItemError] = useState<string | null>(null);
 
   useEffect(() => {
     getClients().then(setClients).catch(() => setError('Failed to load clients.'));
@@ -53,11 +49,11 @@ export default function InvoiceFormPage() {
     try {
       if (isEditMode && id) {
         await updateInvoice(id, form);
-        loadInvoice(id);
+        navigate('/invoices');
       } else {
         const created = await createInvoice(form);
-        navigate(`/invoices/${created.id}`);
-        return;
+        // Redirect to the dedicated line-items page for this new invoice.
+        navigate(`/invoices/${created.id}/line-items`);
       }
     } catch {
       setError('Failed to save invoice. Check required fields.');
@@ -66,38 +62,21 @@ export default function InvoiceFormPage() {
     }
   }
 
-  async function handleAddLineItem() {
-    if (!id || !lineItem.description || !lineItem.unit_price) return;
-    setLineItemError(null);
-    try {
-      await createLineItem({
-        invoice: id,
-        description: lineItem.description,
-        quantity: Number(lineItem.quantity),
-        unit_price: Number(lineItem.unit_price),
-      });
-      setLineItem({ description: '', quantity: '1', unit_price: '' });
-      loadInvoice(id);
-    } catch {
-      setLineItemError('Failed to add line item.');
-    }
-  }
-
-  async function handleRemoveLineItem(itemId: string) {
-    if (!id) return;
-    try {
-      await deleteLineItem(itemId);
-      loadInvoice(id);
-    } catch {
-      setLineItemError('Failed to remove line item.');
-    }
-  }
-
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">
-        {isEditMode ? 'Edit Invoice' : 'Add Invoice'}
-      </h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-slate-800">
+          {isEditMode ? 'Edit Invoice' : 'Add Invoice'}
+        </h1>
+        {isEditMode && id && (
+          <Link
+            to={`/invoices/${id}/line-items`}
+            className="flex items-center gap-1.5 text-sm text-blue-700 hover:underline"
+          >
+            <Receipt size={15} /> Manage Line Items
+          </Link>
+        )}
+      </div>
 
       {error && <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-4 border border-red-200">{error}</p>}
 
@@ -180,75 +159,6 @@ export default function InvoiceFormPage() {
           </button>
         </div>
       </form>
-
-      {isEditMode && invoice && (
-        <div className="mt-8">
-          <h2 className="text-lg font-bold text-slate-800 mb-3">Line Items</h2>
-          {lineItemError && <p className="text-red-600 text-sm mb-2">{lineItemError}</p>}
-
-          <div className="bg-white rounded-lg shadow p-4 mb-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <input
-              placeholder="Description"
-              value={lineItem.description}
-              onChange={(e) => setLineItem({ ...lineItem, description: e.target.value })}
-              className="col-span-2 px-3 py-2 rounded border border-slate-300"
-            />
-            <input
-              type="number"
-              placeholder="Qty"
-              value={lineItem.quantity}
-              onChange={(e) => setLineItem({ ...lineItem, quantity: e.target.value })}
-              className="px-3 py-2 rounded border border-slate-300"
-            />
-            <input
-              type="number"
-              placeholder="Unit Price"
-              value={lineItem.unit_price}
-              onChange={(e) => setLineItem({ ...lineItem, unit_price: e.target.value })}
-              className="px-3 py-2 rounded border border-slate-300"
-            />
-            <button
-              onClick={handleAddLineItem}
-              className="col-span-4 bg-blue-900 hover:bg-blue-800 text-white text-sm py-2 rounded"
-            >
-              + Add Line Item
-            </button>
-          </div>
-
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
-                <tr>
-                  <th className="px-4 py-3">Description</th>
-                  <th className="px-4 py-3">Qty</th>
-                  <th className="px-4 py-3">Unit Price</th>
-                  <th className="px-4 py-3">Total</th>
-                  <th className="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoice.line_items.map((li) => (
-                  <tr key={li.id} className="border-t border-slate-100">
-                    <td className="px-4 py-3">{li.description}</td>
-                    <td className="px-4 py-3">{li.quantity}</td>
-                    <td className="px-4 py-3">{Number(li.unit_price).toLocaleString()}</td>
-                    <td className="px-4 py-3 font-medium">{Number(li.total_price).toLocaleString()}</td>
-                    <td className="px-4 py-3 text-right">
-                      <button onClick={() => handleRemoveLineItem(li.id)} className="text-red-600 hover:underline">Remove</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className="border-t border-slate-200 bg-slate-50">
-                  <td colSpan={3} className="px-4 py-3 text-right font-semibold">Subtotal</td>
-                  <td colSpan={2} className="px-4 py-3 font-bold text-blue-900">{Number(invoice.subtotal).toLocaleString()}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

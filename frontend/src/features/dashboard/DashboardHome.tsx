@@ -179,7 +179,7 @@ function ManagementStats() {
     icon: React.ElementType;
     tone: Tone;
   }> = [
-    { key: 'guards', label: 'Active Guards', value: stats?.activeGuards, to: '/staff', icon: Users, tone: 'default' },
+    { key: 'guards', label: 'Active Guards', value: stats?.activeGuards, to: '/active-guards', icon: Users, tone: 'default' },
     {
       key: 'incidents',
       label: 'Open Incidents',
@@ -329,14 +329,6 @@ function GuardDashboard() {
           to="/my-incidents"
           isLoading={isLoading}
           tone={openIncidentCount > 0 ? 'critical' : 'success'}
-        />
-        <StatusRow
-          icon={Wallet}
-          label="Latest Payslip"
-          value={latestPayslip ? latestPayslip.status : 'None yet'}
-          to="/my-payslips"
-          isLoading={isLoading}
-          tone={payslipTone}
         />
       </OverviewPanel>
 

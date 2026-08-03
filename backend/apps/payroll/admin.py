@@ -10,7 +10,7 @@ class PayrollPeriodAdmin(admin.ModelAdmin):
 
 @admin.register(SalaryStructure)
 class SalaryStructureAdmin(admin.ModelAdmin):
-    list_display = ('employee', 'basic_salary', 'payment_frequency', 'effective_from', 'effective_to', 'is_active')
+    list_display = ('employee', 'basic_salary', 'payment_frequency', 'overtime_rate', 'is_active')
     list_filter = ('payment_frequency', 'is_active')
     search_fields = ('employee__employee_number', 'employee__user__email')
 

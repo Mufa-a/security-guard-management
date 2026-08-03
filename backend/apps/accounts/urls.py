@@ -2,6 +2,7 @@ from .views import UserListView
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from .views import PinLoginView
+from .views import AcceptPolicyView
 from .views import (
     RegisterView,
     CustomTokenObtainPairView,
@@ -19,4 +20,5 @@ urlpatterns = [
     path("password-reset/confirm/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
     path("users/", UserListView.as_view(), name="user-list"),
     path("pin-login/", PinLoginView.as_view(), name="pin-login"),
+    path("accept-policy/", AcceptPolicyView.as_view(), name="accept-policy"),
 ]

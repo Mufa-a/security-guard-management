@@ -8,7 +8,6 @@ stay accurate even after a Finance Act rate change.
 """
 
 from django.db import models
-from django.db.models import Q
 from apps.core.models import BaseModel
 
 
@@ -31,8 +30,8 @@ class PayrollPeriod(BaseModel):
 
 class SalaryStructure(BaseModel):
     """
-    Historical salary records — an employee can have multiple rows over
-    time. effective_to = null means this is the currently active one.
+    Current salary only — one record per employee. Updating salary
+    overwrites this row directly; no history is kept.
     """
 
     class PaymentFrequency(models.TextChoices):
@@ -40,36 +39,17 @@ class SalaryStructure(BaseModel):
         WEEKLY = "WEEKLY", "Weekly"
         BI_WEEKLY = "BI_WEEKLY", "Bi-Weekly"
 
-    employee = models.ForeignKey(
-        'staff.EmployeeProfile', on_delete=models.CASCADE, related_name='salary_structures'
+    employee = models.OneToOneField(
+        'staff.EmployeeProfile', on_delete=models.CASCADE, related_name='salary_structure'
     )
     basic_salary = models.DecimalField(max_digits=12, decimal_places=2)
     payment_frequency = models.CharField(
         max_length=20, choices=PaymentFrequency.choices, default=PaymentFrequency.MONTHLY
     )
-    effective_from = models.DateField()
-    effective_to = models.DateField(null=True, blank=True)  # null = currently active
     overtime_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
-    class Meta:
-        ordering = ['-effective_from']
-
     def __str__(self):
-        return f"{self.employee} - KES {self.basic_salary}/{self.payment_frequency} from {self.effective_from}"
-
-    @classmethod
-    def effective_for(cls, employee, as_of_date):
-        """
-        The SalaryStructure in effect for this employee on a specific date —
-        started on or before as_of_date, and either still open (no end date)
-        or ended on or after as_of_date.
-        """
-        return (
-            cls.objects.filter(employee=employee, effective_from__lte=as_of_date)
-            .filter(Q(effective_to__isnull=True) | Q(effective_to__gte=as_of_date))
-            .order_by('-effective_from')
-            .first()
-        )
+        return f"{self.employee} - KES {self.basic_salary}/{self.payment_frequency}"
 
 
 class Allowance(BaseModel):

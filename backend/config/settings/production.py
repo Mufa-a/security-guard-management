@@ -11,16 +11,22 @@ DATABASES = {
     )
 }
 
-# No default on purpose — production must set this explicitly or it fails loudly.
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
-# WhiteNoise serves static files (including Django admin's CSS/JS) directly
-# from the app process, since DEBUG=False disables Django's built-in static
-# file serving.
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='', cast=Csv())
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': config('REDIS_URL'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
 
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True

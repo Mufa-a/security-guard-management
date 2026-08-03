@@ -121,6 +121,17 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+    'anon': config('THROTTLE_ANON_RATE', default='30/minute'),
+    'user': config('THROTTLE_USER_RATE', default='120/minute'),
+    'login': config('THROTTLE_LOGIN_RATE', default='5/minute'),
+    'reports': config('THROTTLE_REPORTS_RATE', default='10/minute'),
+    'password_reset': config('THROTTLE_PASSWORD_RESET_RATE', default='3/hour'),
+},
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),

@@ -20,12 +20,25 @@ apiClient.interceptors.request.use((config) => {
 let isRefreshing = false;
 let refreshQueue: Array<() => void> = [];
 
+// Endpoints where a 401 means "bad credentials", not "session expired" —
+// these should never trigger the refresh-token flow or a redirect.
+const AUTH_ENDPOINTS = ['/accounts/login/', '/accounts/pin-login/', '/accounts/login/refresh/'];
+
+function isAuthEndpoint(url?: string): boolean {
+  if (!url) return false;
+  return AUTH_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+}
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthEndpoint(originalRequest.url)
+    ) {
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getItem('refresh_token');

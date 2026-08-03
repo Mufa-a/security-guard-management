@@ -115,22 +115,18 @@ class ShiftPermission(BasePermission):
         if not (request.user and request.user.is_authenticated and request.user.role):
             return False
         role_name = request.user.role.name
-        if role_name == 'ADMIN':
+        if role_name in ('ADMIN', 'SUPERVISOR'):
             return True
         if role_name == 'MANAGER':
             return request.method in SAFE_METHODS
-        if role_name == 'SUPERVISOR':
-            return True
         return False
 
     def has_object_permission(self, request, view, obj):
         role_name = request.user.role.name
-        if role_name == 'ADMIN':
+        if role_name in ('ADMIN', 'SUPERVISOR'):
             return True
         if role_name == 'MANAGER':
             return request.method in SAFE_METHODS
-        if role_name == 'SUPERVISOR':
-            return obj.site_id in get_supervisor_site_ids(request.user)
         return False
 
 
@@ -139,24 +135,20 @@ class ShiftAssignmentPermission(BasePermission):
         if not (request.user and request.user.is_authenticated and request.user.role):
             return False
         role_name = request.user.role.name
-        if role_name == 'ADMIN':
+        if role_name in ('ADMIN', 'SUPERVISOR'):
             return True
         if role_name == 'MANAGER':
             return request.method in SAFE_METHODS
-        if role_name == 'SUPERVISOR':
-            return True
         if role_name == 'GUARD':
             return request.method in SAFE_METHODS
         return False
 
     def has_object_permission(self, request, view, obj):
         role_name = request.user.role.name
-        if role_name == 'ADMIN':
+        if role_name in ('ADMIN', 'SUPERVISOR'):
             return True
         if role_name == 'MANAGER':
             return request.method in SAFE_METHODS
-        if role_name == 'SUPERVISOR':
-            return obj.shift.site_id in get_supervisor_site_ids(request.user)
         if role_name == 'GUARD':
             profile = getattr(request.user, 'employee_profile', None)
             return request.method in SAFE_METHODS and profile and obj.employee_id == profile.id
@@ -166,22 +158,22 @@ class IsOwnPayslipOrAdmin(BasePermission):
     """
     ADMIN: full CRUD on all payslips, plus bulk generation.
     MANAGER: read-only access to ALL payslips (list/retrieve), no write, no generation.
-    Everyone else: can only list/retrieve their own payslip(s).
+    SUPERVISOR and GUARD: no access at all — payslips are printed by the
+    office, not self-served, per client request.
     """
     def has_permission(self, request, view):
         if not (request.user and request.user.is_authenticated and request.user.role):
             return False
-        if request.user.role.name == 'ADMIN':
-            return True
-        return view.action in ('list', 'retrieve', 'my_payslips')
-
-    def has_object_permission(self, request, view, obj):
         role_name = request.user.role.name
         if role_name == 'ADMIN':
             return True
         if role_name == 'MANAGER':
-            return True
-        return obj.employee.user_id == request.user.id
+            return view.action in ('list', 'retrieve')
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        role_name = request.user.role.name
+        return role_name in ('ADMIN', 'MANAGER')
 
 
 class PayrollPeriodPermission(BasePermission):

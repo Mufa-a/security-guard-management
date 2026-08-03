@@ -1,4 +1,4 @@
-from apps.accounts.models import Role
+from apps.accounts.models import Role, CURRENT_POLICY_VERSION
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -42,11 +42,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Password must contain at least 2 numbers.")
 
         return value
+
     def validate_phone_number(self, value):
         if value and (not value.isdigit() or len(value) != 10):
             raise serializers.ValidationError("Phone number must be exactly 10 digits.")
         return value
-    
+
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
@@ -65,6 +66,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise serializers.ValidationError(
                 "Guards must log in using their employee number and PIN, not email and password."
             )
+        data["policy_accepted"] = self.user.policy_version == CURRENT_POLICY_VERSION
         return data
 
 

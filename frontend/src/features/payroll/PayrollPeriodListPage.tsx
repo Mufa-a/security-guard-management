@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Users, Wallet, Plus, ChevronRight, Clock, Trash2 } from 'lucide-react';
-import { getPayrollPeriods, createPayrollPeriod, getPayslips, deletePayrollPeriod } from '../../api/payrollApi';
+import { Calendar, Users, Wallet, Plus, ChevronRight, Clock, Trash2, Lock } from 'lucide-react';
+import { getPayrollPeriods, createPayrollPeriod, getPayslips, deletePayrollPeriod, closePayrollPeriod } from '../../api/payrollApi';
 import { useAuth } from '../auth/AuthContext';
 import type { PayrollPeriod, Payslip } from '../../types/payroll';
 
@@ -26,6 +26,7 @@ export default function PayrollPeriodListPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ period_start: '', period_end: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     load();
@@ -65,6 +66,20 @@ export default function PayrollPeriodListPage() {
       load();
     } catch {
       setError('Failed to delete payroll period.');
+    }
+  }
+
+  async function handleClosePeriod(id: string, label: string) {
+    if (!confirm(`Close payroll period "${label}"? Once closed, no further payslips can be generated for it.`)) return;
+    setError(null);
+    setIsClosing(true);
+    try {
+      await closePayrollPeriod(id);
+      load();
+    } catch (err: any) {
+      setError(err?.response?.data?.detail ?? 'Failed to close payroll period.');
+    } finally {
+      setIsClosing(false);
     }
   }
 
@@ -139,12 +154,23 @@ export default function PayrollPeriodListPage() {
                 {currentPeriodPayslips.length} payslip(s) generated so far
               </p>
             </div>
-            <Link
-              to={`/payroll/generate/${currentPeriod.id}`}
-              className="bg-white text-blue-900 hover:bg-blue-50 font-semibold px-5 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap"
-            >
-              Generate Payslips <ChevronRight size={16} />
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Link
+                to={`/payroll/generate/${currentPeriod.id}`}
+                className="bg-white text-blue-900 hover:bg-blue-50 font-semibold px-5 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap"
+              >
+                Generate Payslips <ChevronRight size={16} />
+              </Link>
+              {isAdmin && currentPeriod.status === 'OPEN' && (
+                <button
+                  onClick={() => handleClosePeriod(currentPeriod.id, `${currentPeriod.period_start} - ${currentPeriod.period_end}`)}
+                  disabled={isClosing}
+                  className="bg-blue-950 hover:bg-black text-white font-semibold px-5 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap disabled:opacity-50 border border-blue-800"
+                >
+                  <Lock size={15} /> {isClosing ? 'Closing...' : 'Close Period'}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       ) : (
@@ -231,6 +257,15 @@ export default function PayrollPeriodListPage() {
                           <Link to={`/payroll/payslips?period=${p.id}`} className="text-blue-700 hover:underline">
                             View
                           </Link>
+                          {isAdmin && p.status === 'OPEN' && (
+                            <button
+                              onClick={() => handleClosePeriod(p.id, label)}
+                              disabled={isClosing}
+                              className="text-slate-700 hover:text-black flex items-center gap-1 disabled:opacity-50"
+                            >
+                              <Lock size={14} /> Close
+                            </button>
+                          )}
                           {isAdmin && periodPayslipCount === 0 && (
                             <button
                               onClick={() => handleDeletePeriod(p.id, label)}

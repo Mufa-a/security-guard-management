@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
@@ -16,11 +16,46 @@ export default function LoginPage() {
 
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lockedUntil, setLockedUntil] = useState<Date | null>(null);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const { login, pinLogin } = useAuth();
   const navigate = useNavigate();
 
+  // Countdown ticker — runs while locked, clears itself once time is up.
+  useEffect(() => {
+    if (!lockedUntil) return;
+
+    function tick() {
+      const secondsLeft = Math.max(0, Math.round((lockedUntil!.getTime() - Date.now()) / 1000));
+      setRemainingSeconds(secondsLeft);
+      if (secondsLeft <= 0) {
+        setLockedUntil(null);
+        setError(null);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      }
+    }
+
+    tick();
+    intervalRef.current = setInterval(tick, 1000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [lockedUntil]);
+
+  function formatCountdown(seconds: number): string {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  const isLocked = lockedUntil !== null && remainingSeconds > 0;
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (isLocked) return;
+
     setError(null);
     setIsSubmitting(true);
     try {
@@ -35,8 +70,13 @@ export default function LoginPage() {
         err?.response?.data?.detail ||
         (Array.isArray(err?.response?.data?.non_field_errors) ? err.response.data.non_field_errors[0] : null);
 
-      if (err?.response?.status === 423) {
-        setError('Too many failed attempts. Try again in a few minutes.');
+      const lockedUntilRaw = err?.response?.data?.locked_until;
+
+      if (err?.response?.status === 423 && lockedUntilRaw) {
+        setLockedUntil(new Date(lockedUntilRaw));
+        setError(null); // countdown message replaces the static error below
+      } else if (err?.response?.status === 423) {
+        setError(backendMessage || 'Too many failed attempts. Try again in a few minutes.');
       } else if (backendMessage) {
         setError(backendMessage);
       } else if (mode === 'password') {
@@ -92,7 +132,14 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {error && (
+          {isLocked && (
+            <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-4 border border-red-200">
+              Your account is temporarily locked due to too many failed login attempts.
+              Try again in {formatCountdown(remainingSeconds)}.
+            </p>
+          )}
+
+          {!isLocked && error && (
             <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-4 border border-red-200">
               {error}
             </p>
@@ -106,7 +153,8 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full mb-4 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800"
+                disabled={isLocked}
+                className="w-full mb-4 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 disabled:bg-slate-100"
               />
               <label className="block text-sm text-slate-700 mb-1">Password</label>
               <input
@@ -114,7 +162,8 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full mb-6 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800"
+                disabled={isLocked}
+                className="w-full mb-6 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 disabled:bg-slate-100"
               />
             </>
           ) : (
@@ -126,7 +175,8 @@ export default function LoginPage() {
                 onChange={(e) => setEmployeeNumber(e.target.value)}
                 placeholder="e.g. EMP-0042"
                 required
-                className="w-full mb-4 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800"
+                disabled={isLocked}
+                className="w-full mb-4 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 disabled:bg-slate-100"
               />
               <label className="block text-sm text-slate-700 mb-1">6-Digit PIN</label>
               <input
@@ -137,17 +187,22 @@ export default function LoginPage() {
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
                 required
-                className="w-full mb-6 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 tracking-[0.3em] text-center"
+                disabled={isLocked}
+                className="w-full mb-6 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 disabled:bg-slate-100 tracking-[0.3em] text-center"
               />
             </>
           )}
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isLocked}
             className="w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-2 rounded transition-colors disabled:opacity-50"
           >
-            {isSubmitting ? 'Logging in...' : 'Log In'}
+            {isLocked
+              ? `Locked — ${formatCountdown(remainingSeconds)}`
+              : isSubmitting
+              ? 'Logging in...'
+              : 'Log In'}
           </button>
         </form>
       </div>

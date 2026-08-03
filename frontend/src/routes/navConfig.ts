@@ -33,6 +33,5 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'My Shifts', path: '/my-shifts', roles: ['GUARD'] },
   { label: 'My Attendance', path: '/my-attendance', roles: ['GUARD'] },
   { label: 'My Incidents', path: '/my-incidents', roles: ['GUARD'] },
-  { label: 'My Payslips', path: '/my-payslips', roles: ['GUARD'] },
   { label: 'Profile', path: '/profile', roles: ['GUARD'] },
 ];

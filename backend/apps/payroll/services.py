@@ -64,11 +64,10 @@ def generate_payslip(employee, period):
     if Payslip.objects.filter(employee=employee, period=period).exists():
         raise ValueError(f"A payslip already exists for {employee} in {period}.")
 
-    salary_structure = SalaryStructure.effective_for(employee, period.period_start)
-    if not salary_structure:
-        raise ValueError(
-            f"{employee} has no SalaryStructure effective for {period.period_start}."
-        )
+    try:
+        salary_structure = employee.salary_structure
+    except SalaryStructure.DoesNotExist:
+        raise ValueError(f"{employee} has no SalaryStructure set up.")
 
     basic_salary = salary_structure.basic_salary
     allowances = Allowance.objects.filter(employee=employee, is_active=True)

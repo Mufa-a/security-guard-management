@@ -1,5 +1,5 @@
-from rest_framework import viewsets, serializers as drf_serializers
-from apps.core.permissions import ShiftPermission, ShiftAssignmentPermission, get_supervisor_site_ids
+from rest_framework import viewsets
+from apps.core.permissions import ShiftPermission, ShiftAssignmentPermission
 from .models import Shift, ShiftAssignment
 from .serializers import ShiftSerializer, ShiftAssignmentSerializer
 
@@ -9,22 +9,7 @@ class ShiftViewSet(viewsets.ModelViewSet):
     permission_classes = [ShiftPermission]
 
     def get_queryset(self):
-        qs = Shift.objects.select_related('site').all()
-        user = self.request.user
-        role_name = user.role.name
-        if role_name == 'SUPERVISOR':
-            return qs.filter(site_id__in=get_supervisor_site_ids(user))
-        return qs
-
-    def perform_create(self, serializer):
-        user = self.request.user
-        if user.role.name == 'SUPERVISOR':
-            site = serializer.validated_data.get('site')
-            if site.id not in get_supervisor_site_ids(user):
-                raise drf_serializers.ValidationError(
-                    {'site': 'You can only create shifts for sites you manage.'}
-                )
-        serializer.save()
+        return Shift.objects.select_related('site').all()
 
 
 class ShiftAssignmentViewSet(viewsets.ModelViewSet):
@@ -34,10 +19,7 @@ class ShiftAssignmentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = ShiftAssignment.objects.select_related('shift__site', 'employee__user').all()
         user = self.request.user
-        role_name = user.role.name
-        if role_name == 'GUARD':
+        if user.role.name == 'GUARD':
             profile = getattr(user, 'employee_profile', None)
             return qs.filter(employee=profile) if profile else qs.none()
-        if role_name == 'SUPERVISOR':
-            return qs.filter(shift__site_id__in=get_supervisor_site_ids(user))
         return qs

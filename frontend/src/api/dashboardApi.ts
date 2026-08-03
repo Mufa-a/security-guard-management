@@ -8,12 +8,13 @@ export interface DashboardStats {
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-  const [staffRes, sitesRes, incidentsRes, invoicesRes, assignmentsRes] = await Promise.all([
+  const [staffRes, sitesRes, incidentsRes, invoicesRes, assignmentsRes, shiftAssignmentsRes] = await Promise.all([
     apiClient.get('/staff/profiles/'),
     apiClient.get('/sites/sites/'),
     apiClient.get('/incidents/incidents/'),
     apiClient.get('/invoices/invoices/'),
     apiClient.get('/sites/assignments/'),
+    apiClient.get('/shifts/assignments/'),
   ]);
 
   const staff = staffRes.data.results ?? staffRes.data;
@@ -21,16 +22,22 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   const incidents = incidentsRes.data.results ?? incidentsRes.data;
   const invoices = invoicesRes.data.results ?? invoicesRes.data;
   const assignments = assignmentsRes.data.results ?? assignmentsRes.data;
+  const shiftAssignments = shiftAssignmentsRes.data.results ?? shiftAssignmentsRes.data;
 
   const today = new Date().toISOString().slice(0, 10);
 
-  // An employee currently "deployed" — an active SiteAssignment with no
-  // end_date, or an end_date that hasn't passed yet.
+  // Deployed via a long-term SiteAssignment...
   const deployedEmployeeIds = new Set(
     assignments
       .filter((a: any) => a.is_active && (!a.end_date || a.end_date >= today))
       .map((a: any) => a.employee)
   );
+
+  // ...or scheduled on a shift today, since a guard can be rostered
+  // without a formal long-term SiteAssignment record.
+  shiftAssignments
+    .filter((sa: any) => sa.shift_date === today && sa.status !== 'CANCELLED')
+    .forEach((sa: any) => deployedEmployeeIds.add(sa.employee));
 
   const activeGuards = staff.filter(
     (s: any) =>

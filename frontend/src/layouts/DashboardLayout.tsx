@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+﻿import { useState } from 'react';
+import { NavLink, Link, Outlet } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '../features/auth/AuthContext';
 import { NAV_ITEMS } from '../routes/navConfig';
@@ -15,7 +15,6 @@ export default function DashboardLayout() {
 
   return (
     <div className="h-screen flex bg-slate-100 overflow-hidden font-sans">
-      {/* Mobile backdrop */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-30 md:hidden"
@@ -76,6 +75,12 @@ export default function DashboardLayout() {
               </p>
             </div>
           </div>
+          <Link
+            to="/policies/privacy-policy"
+            className="block text-center text-[10px] font-mono uppercase tracking-widest text-slate-500 hover:text-slate-300 mb-2 transition-colors"
+          >
+            Privacy & Data Policy
+          </Link>
           <button
             onClick={logout}
             className="w-full border border-white/15 hover:border-white/30 hover:bg-white/5 text-slate-300 hover:text-white text-xs font-medium uppercase tracking-widest py-2 transition-colors"
@@ -86,7 +91,6 @@ export default function DashboardLayout() {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 md:-ml-6">
-        {/* Mobile top bar */}
         <header className="md:hidden flex items-center gap-3 bg-crimecurb-navy text-white px-4 py-3 sticky top-0 z-20 print:hidden">
           <button
             onClick={() => setIsSidebarOpen(true)}

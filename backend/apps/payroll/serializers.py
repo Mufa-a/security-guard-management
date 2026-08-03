@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import PayrollPeriod, SalaryStructure, Allowance, Deduction, Payslip
-from datetime import timedelta
+
 
 class PayrollPeriodSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,24 +19,9 @@ class SalaryStructureSerializer(serializers.ModelSerializer):
         model = SalaryStructure
         fields = [
             'id', 'employee', 'employee_name', 'basic_salary', 'payment_frequency',
-            'effective_from', 'effective_to', 'overtime_rate',
-            'is_active', 'created_at', 'updated_at',
+            'overtime_rate', 'is_active', 'created_at', 'updated_at',
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
-
-    def create(self, validated_data):
-        employee = validated_data['employee']
-        new_effective_from = validated_data['effective_from']
-
-        # Auto-close any currently open salary record for this employee so
-        # history stays non-overlapping, instead of requiring manual cleanup.
-        SalaryStructure.objects.filter(
-            employee=employee, effective_to__isnull=True
-        ).exclude(effective_from__gte=new_effective_from).update(
-            effective_to=new_effective_from - timedelta(days=1)
-        )
-
-        return super().create(validated_data)
 
 class AllowanceSerializer(serializers.ModelSerializer):
     employee_name = serializers.CharField(source='employee.user.email', read_only=True)

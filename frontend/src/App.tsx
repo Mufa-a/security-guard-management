@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+﻿import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './features/auth/LoginPage';
 import DashboardLayout from './layouts/DashboardLayout';
 import DashboardHome from './features/dashboard/DashboardHome';
@@ -15,19 +15,22 @@ import MyIncidentsPage from './features/incidents/MyIncidentsPage';
 import ProfilePage from './features/auth/ProfilePage';
 import ShiftListPage from './features/shifts/ShiftListPage';
 import ShiftFormPage from './features/shifts/ShiftFormPage';
+import ShiftAssignGuardsPage from './features/shifts/ShiftAssignGuardsPage';
 import AttendanceManagementPage from './features/attendance/AttendanceManagementPage';
 import IncidentManagementPage from './features/incidents/IncidentManagementPage';
 import InvoiceListPage from './features/invoices/InvoiceListPage';
 import InvoiceFormPage from './features/invoices/InvoiceFormPage';
+import InvoiceLineItemsPage from './features/invoices/InvoiceLineItemsPage';
+import InvoiceDetailPage from './features/invoices/InvoiceDetailPage';
 import ReportsHub from './features/reports/ReportsHub';
 import AttendanceReportPage from './features/reports/AttendanceReportPage';
 import PayrollPeriodListPage from './features/payroll/PayrollPeriodListPage';
 import PayslipListPage from './features/payroll/PayslipListPage';
 import GeneratePayslipsPage from './features/payroll/GeneratePayslipsPage';
 import PayslipDetailPage from './features/payroll/PayslipDetailPage';
-import MyPayslipsPage from './features/payroll/MyPayslipsPage';
 import EmployeeSalaryPage from './features/payroll/EmployeeSalaryPage';
 import ActiveGuardsPage from './features/staff/ActiveGuardsPage';
+import InactiveGuardsPage from './features/staff/InactiveGuardsPage';
 import ShiftReportPage from './features/reports/ShiftReportPage';
 import GuardDeploymentReportPage from './features/reports/GuardDeploymentReportPage';
 import IncidentReportPage from './features/reports/IncidentReportPage';
@@ -49,6 +52,10 @@ import RevenueReportPage from './features/reports/RevenueReportPage';
 import InvoiceReportPage from './features/reports/InvoiceReportPage';
 import SalaryCostAnalysisPage from './features/reports/SalaryCostAnalysisPage';
 import ForcePinChangePage from './features/auth/ForcePinChangePage';
+import AcceptPolicyPage from './features/auth/AcceptPolicyPage';
+import PrivacyPolicyPage from './features/policies/PrivacyPolicyPage';
+import DataProtectionPolicyPage from './features/policies/DataProtectionPolicyPage';
+import AccessControlPolicyPage from './features/policies/AccessControlPolicyPage';
 import ExpenseListPage from './features/expenses/ExpenseListPage';
 import ExpenseFormPage from './features/expenses/ExpenseFormPage';
 function App() {
@@ -56,6 +63,10 @@ function App() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/set-pin" element={<ForcePinChangePage />} />
+      <Route path="/accept-policy" element={<AcceptPolicyPage />} />
+      <Route path="/policies/privacy-policy" element={<PrivacyPolicyPage />} />
+      <Route path="/policies/data-protection-policy" element={<DataProtectionPolicyPage />} />
+      <Route path="/policies/access-control-policy" element={<AccessControlPolicyPage />} />
 
       <Route
         element={
@@ -81,11 +92,14 @@ function App() {
         <Route path="/shifts" element={<ShiftListPage />} />
         <Route path="/shifts/new" element={<ShiftFormPage />} />
         <Route path="/shifts/:id" element={<ShiftFormPage />} />
+        <Route path="/shifts/:id/assign" element={<ShiftAssignGuardsPage />} />
         <Route path="/attendance" element={<AttendanceManagementPage />} />
         <Route path="/incidents" element={<IncidentManagementPage />} />
         <Route path="/invoices" element={<InvoiceListPage />} />
         <Route path="/invoices/new" element={<InvoiceFormPage />} />
-        <Route path="/invoices/:id" element={<InvoiceFormPage />} />
+        <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
+        <Route path="/invoices/:id/edit" element={<InvoiceFormPage />} />
+        <Route path="/invoices/:id/line-items" element={<InvoiceLineItemsPage />} />
 
         <Route
           path="/reports"
@@ -144,30 +158,30 @@ function App() {
           }
         />
         <Route
-  path="/reports/employee-report"
-  element={
-    <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
-      <EmployeeReportPage />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/reports/staff-deployment-report"
-  element={
-    <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
-      <StaffDeploymentReportPage />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/reports/salary-structure-report"
-  element={
-    <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
-      <SalaryStructureReportPage />
-    </ProtectedRoute>
-  }
-/>
-<Route
+          path="/reports/employee-report"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <EmployeeReportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports/staff-deployment-report"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <StaffDeploymentReportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports/salary-structure-report"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <SalaryStructureReportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/reports/payslip-report"
           element={
             <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
@@ -240,36 +254,35 @@ function App() {
           }
         />
         <Route
-  path="/reports/revenue-report"
-  element={
-    <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
-      <RevenueReportPage />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/reports/invoice-report"
-  element={
-    <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
-      <InvoiceReportPage />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/reports/salary-cost-analysis"
-  element={
-    <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
-      <SalaryCostAnalysisPage />
-    </ProtectedRoute>
-  }
-/>
+          path="/reports/revenue-report"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <RevenueReportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports/invoice-report"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <InvoiceReportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports/salary-cost-analysis"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <SalaryCostAnalysisPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="/payroll" element={<PayrollPeriodListPage />} />
         <Route path="/payroll/payslips" element={<PayslipListPage />} />
         <Route path="/payroll/payslips/:id" element={<PayslipDetailPage />} />
-        <Route path="/my-payslips" element={<MyPayslipsPage />} />
-        <Route path="/my-payslips/:id" element={<PayslipDetailPage />} />
         <Route path="/active-guards" element={<ActiveGuardsPage />} />
+        <Route path="/active-guards/inactive" element={<InactiveGuardsPage />} />
         <Route path="/expenses" element={<ExpenseListPage />} />
         <Route path="/expenses/new" element={<ExpenseFormPage />} />
         <Route path="/expenses/:id" element={<ExpenseFormPage />} />
