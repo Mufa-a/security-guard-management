@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Plus } from 'lucide-react';
 import { getSites, deleteSite } from '../../api/sitesApi';
 import { useAuth } from '../auth/AuthContext';
 import type { Site } from '../../types/sites';
@@ -37,66 +37,76 @@ export default function SiteListPage() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">Sites</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-5 border-b border-slate-200">
+        <div>
+          <h1 className="text-xl font-semibold text-slate-900">Sites</h1>
+          <p className="text-sm text-slate-500 mt-0.5">Client locations covered by your guards.</p>
+        </div>
         {canCreate && (
           <Link
             to="/sites/new"
-            className="bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors inline-block text-center"
+            className="inline-flex items-center justify-center gap-1.5 bg-crimecurb-navy hover:bg-crimecurb-navy/90 text-white text-sm font-medium px-4 py-2.5 rounded-md transition-colors"
           >
-            + Add Site
+            <Plus size={16} /> Add site
           </Link>
         )}
       </div>
 
-      {isLoading && <p className="text-slate-500">Loading...</p>}
-      {error && <p className="text-red-600 mb-4">{error}</p>}
+      {isLoading && <p className="text-sm text-slate-500">Loading\u2026</p>}
+      {error && (
+        <p className="bg-red-50 text-red-700 text-sm rounded-md p-3 border border-red-200 mb-4">{error}</p>
+      )}
 
       {!isLoading && !error && (
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
-          <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
-              <tr>
-                <th className="px-4 py-3">Site Name</th>
-                <th className="px-4 py-3">Client</th>
-                <th className="px-4 py-3">Address</th>
-                <th className="px-4 py-3">Site Manager Contact</th>
-                <th className="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {sites.map((s) => (
-                <tr key={s.id} className="border-t border-slate-100">
-                  <td className="px-4 py-3 font-medium text-slate-800">{s.name}</td>
-                  <td className="px-4 py-3 text-slate-500">{s.client_name}</td>
-                  <td className="px-4 py-3 text-slate-500">{s.address}</td>
-                  <td className="px-4 py-3 text-slate-500">{s.site_manager_contact || '—'}</td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex justify-end items-center gap-3">
-                      <Link to={`/sites/${s.id}`} className="text-blue-700 hover:underline flex items-center gap-1">
-                        <Pencil size={14} /> Edit
-                      </Link>
-                      {isAdmin && (
-                        <button
-                          onClick={() => handleDelete(s.id, s.name)}
-                          className="text-red-600 hover:text-red-800 flex items-center gap-1"
-                        >
-                          <Trash2 size={14} /> Delete
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {sites.length === 0 && (
+        <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left whitespace-nowrap">
+              <thead className="bg-slate-50 text-slate-500 uppercase text-xs font-semibold border-b border-slate-200">
                 <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
-                    No sites yet.
-                  </td>
+                  <th className="px-5 py-3">Site name</th>
+                  <th className="px-5 py-3">Client</th>
+                  <th className="px-5 py-3">Address</th>
+                  <th className="px-5 py-3">Site manager contact</th>
+                  <th className="px-5 py-3"></th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {sites.map((s) => (
+                  <tr key={s.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="px-5 py-3.5 font-medium text-slate-900">{s.name}</td>
+                    <td className="px-5 py-3.5 text-slate-600">{s.client_name}</td>
+                    <td className="px-5 py-3.5 text-slate-600">{s.address}</td>
+                    <td className="px-5 py-3.5 text-slate-600">{s.site_manager_contact || '\u2014'}</td>
+                    <td className="px-5 py-3.5 text-right">
+                      <div className="flex justify-end items-center gap-4">
+                        <Link
+                          to={`/sites/${s.id}`}
+                          className="text-crimecurb-navy hover:text-crimecurb-navy/80 font-medium flex items-center gap-1.5 transition-colors"
+                        >
+                          <Pencil size={14} /> Edit
+                        </Link>
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDelete(s.id, s.name)}
+                            className="text-red-600 hover:text-red-700 font-medium flex items-center gap-1.5 transition-colors"
+                          >
+                            <Trash2 size={14} /> Delete
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {sites.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-5 py-10 text-center text-slate-400">
+                      No sites yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Plus } from 'lucide-react';
 import { getClients, deleteClient } from '../../api/sitesApi';
 import { useAuth } from '../auth/AuthContext';
 import type { Client } from '../../types/sites';
@@ -34,64 +34,74 @@ export default function ClientListPage() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">Clients</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-5 border-b border-slate-200">
+        <div>
+          <h1 className="text-xl font-semibold text-slate-900">Clients</h1>
+          <p className="text-sm text-slate-500 mt-0.5">Companies you provide security services for.</p>
+        </div>
         <Link
           to="/clients/new"
-          className="bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors inline-block text-center"
+          className="inline-flex items-center justify-center gap-1.5 bg-crimecurb-navy hover:bg-crimecurb-navy/90 text-white text-sm font-medium px-4 py-2.5 rounded-md transition-colors"
         >
-          + Add Client
+          <Plus size={16} /> Add client
         </Link>
       </div>
 
-      {isLoading && <p className="text-slate-500">Loading...</p>}
-      {error && <p className="text-red-600 mb-4">{error}</p>}
+      {isLoading && <p className="text-sm text-slate-500">Loading\u2026</p>}
+      {error && (
+        <p className="bg-red-50 text-red-700 text-sm rounded-md p-3 border border-red-200 mb-4">{error}</p>
+      )}
 
       {!isLoading && !error && (
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
-          <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
-              <tr>
-                <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">Contact Person</th>
-                <th className="px-4 py-3">Phone</th>
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {clients.map((c) => (
-                <tr key={c.id} className="border-t border-slate-100">
-                  <td className="px-4 py-3 font-medium text-slate-800">{c.name}</td>
-                  <td className="px-4 py-3 text-slate-500">{c.contact_person}</td>
-                  <td className="px-4 py-3 text-slate-500">{c.contact_phone}</td>
-                  <td className="px-4 py-3 text-slate-500">{c.contact_email}</td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex justify-end items-center gap-3">
-                      <Link to={`/clients/${c.id}`} className="text-blue-700 hover:underline flex items-center gap-1">
-                        <Pencil size={14} /> Edit
-                      </Link>
-                      {isAdmin && (
-                        <button
-                          onClick={() => handleDelete(c.id, c.name)}
-                          className="text-red-600 hover:text-red-800 flex items-center gap-1"
-                        >
-                          <Trash2 size={14} /> Delete
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {clients.length === 0 && (
+        <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left whitespace-nowrap">
+              <thead className="bg-slate-50 text-slate-500 uppercase text-xs font-semibold border-b border-slate-200">
                 <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
-                    No clients yet.
-                  </td>
+                  <th className="px-5 py-3">Name</th>
+                  <th className="px-5 py-3">Contact person</th>
+                  <th className="px-5 py-3">Phone</th>
+                  <th className="px-5 py-3">Email</th>
+                  <th className="px-5 py-3"></th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {clients.map((c) => (
+                  <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="px-5 py-3.5 font-medium text-slate-900">{c.name}</td>
+                    <td className="px-5 py-3.5 text-slate-600">{c.contact_person}</td>
+                    <td className="px-5 py-3.5 text-slate-600">{c.contact_phone}</td>
+                    <td className="px-5 py-3.5 text-slate-600">{c.contact_email}</td>
+                    <td className="px-5 py-3.5 text-right">
+                      <div className="flex justify-end items-center gap-4">
+                        <Link
+                          to={`/clients/${c.id}`}
+                          className="text-crimecurb-navy hover:text-crimecurb-navy/80 font-medium flex items-center gap-1.5 transition-colors"
+                        >
+                          <Pencil size={14} /> Edit
+                        </Link>
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDelete(c.id, c.name)}
+                            className="text-red-600 hover:text-red-700 font-medium flex items-center gap-1.5 transition-colors"
+                          >
+                            <Trash2 size={14} /> Delete
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {clients.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-5 py-10 text-center text-slate-400">
+                      No clients yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
