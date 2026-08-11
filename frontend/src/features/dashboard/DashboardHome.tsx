@@ -8,6 +8,7 @@ import { useAuth } from '../auth/AuthContext';
 import { getDashboardStats } from '../../api/dashboardApi';
 import type { DashboardStats } from '../../api/dashboardApi';
 import { getMyShiftAssignments } from '../../api/shiftsApi';
+import LiveMetricsPanel from './LiveMetricsPanel';
 
 type Tone = 'default' | 'success' | 'warning' | 'critical';
 
@@ -201,29 +202,34 @@ function ManagementStats() {
   const rows = user?.role === 'SUPERVISOR' ? allRows.filter((r) => r.key !== 'invoices') : allRows;
 
   const isAdmin = user?.role === 'ADMIN';
+  const canAddEmployee = user?.role === 'ADMIN' || user?.role === 'MANAGER';
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <OverviewPanel role={user?.role ?? undefined}>
-        {rows.map((row) => (
-          <StatusRow
-            key={row.key}
-            icon={row.icon}
-            label={row.label}
-            value={row.value}
-            to={row.to}
-            isLoading={isLoading}
-            tone={row.tone}
-          />
-        ))}
-      </OverviewPanel>
+    <div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <OverviewPanel role={user?.role ?? undefined}>
+          {rows.map((row) => (
+            <StatusRow
+              key={row.key}
+              icon={row.icon}
+              label={row.label}
+              value={row.value}
+              to={row.to}
+              isLoading={isLoading}
+              tone={row.tone}
+            />
+          ))}
+        </OverviewPanel>
 
-      <div className="space-y-3">
-        <p className="text-xs font-mono uppercase tracking-widest text-slate-400 mb-1">Quick Actions</p>
-        <QuickAction icon={UserPlus} label="Add Employee" to="/staff/new" />
-        <QuickAction icon={FileWarning} label="Review Incidents" to="/incidents" tone="accent" />
-        {isAdmin && <QuickAction icon={ClipboardList} label="Manage Payroll" to="/payroll" />}
+        <div className="space-y-3">
+          <p className="text-xs font-mono uppercase tracking-widest text-slate-400 mb-1">Quick Actions</p>
+          {canAddEmployee && <QuickAction icon={UserPlus} label="Add Employee" to="/staff/new" />}
+          <QuickAction icon={FileWarning} label="Review Incidents" to="/incidents" tone="accent" />
+          {isAdmin && <QuickAction icon={ClipboardList} label="Manage Payroll" to="/payroll" />}
+        </div>
       </div>
+
+      <LiveMetricsPanel />
     </div>
   );
 }
@@ -240,20 +246,39 @@ function GuardDashboard() {
     if (!user) return;
     const today = new Date().toISOString().slice(0, 10);
 
-    Promise.all([
+    Promise.allSettled([
       getMyShiftAssignments(),
       import('../../api/attendanceApi').then((m) => m.getMyAttendance()),
       import('../../api/incidentsApi').then((m) => m.getMyIncidents()),
       import('../../api/payrollApi').then((m) => m.getMyPayslips()),
     ])
-      .then(([assignments, attendance, incidents, payslips]) => {
+      .then(([assignmentsRes, attendanceRes, incidentsRes, payslipsRes]) => {
+        // Promise.allSettled (not Promise.all): payroll intentionally
+        // 403s for GUARD role (IsOwnPayslipOrAdmin — "SUPERVISOR and
+        // GUARD: no access at all"). With Promise.all, that one
+        // rejection was taking attendance/shifts/incidents down with
+        // it even though those calls succeeded — which is why "Today's
+        // Status" and "Next Shift" were showing as unscheduled despite
+        // real data existing. Each result is now handled independently.
+        const assignments = assignmentsRes.status === 'fulfilled' ? assignmentsRes.value : [];
+        const attendance = attendanceRes.status === 'fulfilled' ? attendanceRes.value : [];
+        const incidents = incidentsRes.status === 'fulfilled' ? incidentsRes.value : [];
+        const payslips = payslipsRes.status === 'fulfilled' ? payslipsRes.value : [];
+
+        if (assignmentsRes.status === 'rejected') console.warn('Dashboard: shift assignments failed to load', assignmentsRes.reason);
+        if (attendanceRes.status === 'rejected') console.warn('Dashboard: attendance failed to load', attendanceRes.reason);
+        if (incidentsRes.status === 'rejected') console.warn('Dashboard: incidents failed to load', incidentsRes.reason);
+        // payslips rejecting is expected for GUARD — not warned on.
+
         const upcoming = assignments
           .filter((a) => {
             if (a.shift_date < today) return false;
-            // Exclude today's shift if attendance is already fully checked out.
-            const record = attendance.find(
-              (att) => att.employee_name === user.email && att.shift_date === a.shift_date
-            );
+            const record = attendance.find((att) => att.shift_date === a.shift_date);
+            // Once the guard has checked into today's shift, it's no longer
+            // "next" — it's the one already shown under "Today's Status".
+            // Without this, a mid-shift guard sees the same shift repeated
+            // under both rows.
+            if (a.shift_date === today && record?.check_in_time) return false;
             if (record?.check_out_time) return false;
             return true;
           })
@@ -266,13 +291,11 @@ function GuardDashboard() {
             : null
         );
 
-        const todayRecord = attendance.find(
-          (a) => a.employee_name === user.email && a.shift_date === today
-        );
+        const todayRecord = attendance.find((a) => a.shift_date === today);
         setTodayAttendance(todayRecord ? { check_in_time: todayRecord.check_in_time, check_out_time: todayRecord.check_out_time } : null);
 
         const myOpenIncidents = incidents.filter(
-          (i) => i.reported_by_name === user.email && (i.status === 'OPEN' || i.status === 'UNDER_REVIEW')
+          (i) => i.status === 'OPEN' || i.status === 'UNDER_REVIEW'
         );
         setOpenIncidentCount(myOpenIncidents.length);
 

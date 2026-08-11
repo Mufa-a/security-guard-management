@@ -15,11 +15,21 @@ from .serializers import (
     EmployeeProfileCreateSerializer,
     EmployeeDocumentSerializer,
 )
-
+from apps.core.permissions import IsSupervisorOrAbove, IsAdmin, IsManagerOrAdmin
 
 class EmployeeProfileViewSet(viewsets.ModelViewSet):
     queryset = EmployeeProfile.objects.select_related("user").prefetch_related("documents").all()
     permission_classes = [permissions.IsAuthenticated, IsSupervisorOrAbove]
+
+    def get_permissions(self):
+        # Actions with their own @action(permission_classes=...) manage their
+        # own access — don't clobber them with the ViewSet-level defaults below.
+        if self.action in ['me', 'terminate', 'set_pin', 'change_my_pin']:
+            return super().get_permissions()
+        # Supervisor: view only. Create/edit/delete is Manager/Admin only.
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAuthenticated(), IsManagerOrAdmin()]
+        return [permissions.IsAuthenticated(), IsSupervisorOrAbove()]
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:

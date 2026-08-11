@@ -40,15 +40,16 @@ class IsManagerOrAdminOrReadOnly(BasePermission):
     
 class IsOwnAttendanceOrSupervisor(BasePermission):
     """
-    GUARD: can list/retrieve their own record, and use check_in/check_out actions only.
-    SUPERVISOR and above: full CRUD on all records.
+    GUARD: can list/retrieve their own record, use check_in/check_out, and
+    submit (but not review) their own explain_absence.
+    SUPERVISOR and above: full CRUD on all records, plus review_absence.
     """
     def has_permission(self, request, view):
         if not (request.user and request.user.is_authenticated and request.user.role):
             return False
         role_name = request.user.role.name
         if role_name == 'GUARD':
-            return view.action in ('list', 'retrieve', 'check_in', 'check_out')
+            return view.action in ('list', 'retrieve', 'check_in', 'check_out', 'submit_late_arrival_request')
         return role_name in ('ADMIN', 'MANAGER', 'SUPERVISOR')
 
     def has_object_permission(self, request, view, obj):
@@ -59,9 +60,27 @@ class IsOwnAttendanceOrSupervisor(BasePermission):
             return obj.shift_assignment.employee.user_id == request.user.id
         return False
     
+
+def _incident_reported_by_id(obj):
+    """
+    Resolve the reporting employee id for either an Incident itself, or any
+    object that has a direct `incident` FK to one (attachments, witnesses,
+    people-involved, activities). Returns None if it can't be resolved,
+    so callers can fail closed rather than raising AttributeError.
+    """
+    if hasattr(obj, 'reported_by_id'):
+        return obj.reported_by_id
+    incident = getattr(obj, 'incident', None)
+    if incident is not None:
+        return getattr(incident, 'reported_by_id', None)
+    return None
+
+
 class CanReportIncidentOrSupervisor(BasePermission):
     """
-    GUARD: can create incidents and view only their own reports. Cannot edit/delete after submission.
+    GUARD: can create incidents and view only their own reports (and related
+    attachments/witnesses/people/comments on those reports). Cannot edit
+    incident fields like status after submission.
     SUPERVISOR and above: full access to all incidents, including status updates.
     """
     def has_permission(self, request, view):
@@ -69,7 +88,8 @@ class CanReportIncidentOrSupervisor(BasePermission):
             return False
         role_name = request.user.role.name
         if role_name == 'GUARD':
-            return view.action in ('list', 'retrieve', 'create')
+            allowed_actions = ('list', 'retrieve', 'create', 'add_comment', 'download')
+            return view.action in allowed_actions
         return role_name in ('ADMIN', 'MANAGER', 'SUPERVISOR')
 
     def has_object_permission(self, request, view, obj):
@@ -77,9 +97,14 @@ class CanReportIncidentOrSupervisor(BasePermission):
         if role_name in ('ADMIN', 'MANAGER', 'SUPERVISOR'):
             return True
         if role_name == 'GUARD':
-            # GUARD only reaches here for list/retrieve (create has no object yet,
-            # and update/destroy are already blocked in has_permission).
-            return obj.reported_by_id == getattr(request.user.employee_profile, 'id', None)
+            owner_id = _incident_reported_by_id(obj)
+            if owner_id is None or owner_id != getattr(request.user.employee_profile, 'id', None):
+                return False
+            # Guards may only read (GET/HEAD/OPTIONS), or hit the explicitly
+            # whitelisted add_comment/download actions on their own incident.
+            if request.method in SAFE_METHODS:
+                return True
+            return view.action in ('add_comment',)
         return False
     
 class IsInvoiceManagerOrReadOnly(BasePermission):
@@ -109,24 +134,19 @@ def get_supervisor_site_ids(user):
         employee=profile, is_active=True
     ).values_list('site_id', flat=True)
 
-
 class ShiftPermission(BasePermission):
     def has_permission(self, request, view):
         if not (request.user and request.user.is_authenticated and request.user.role):
             return False
         role_name = request.user.role.name
-        if role_name in ('ADMIN', 'SUPERVISOR'):
+        if role_name in ('ADMIN', 'SUPERVISOR', 'MANAGER'):
             return True
-        if role_name == 'MANAGER':
-            return request.method in SAFE_METHODS
         return False
 
     def has_object_permission(self, request, view, obj):
         role_name = request.user.role.name
-        if role_name in ('ADMIN', 'SUPERVISOR'):
+        if role_name in ('ADMIN', 'SUPERVISOR', 'MANAGER'):
             return True
-        if role_name == 'MANAGER':
-            return request.method in SAFE_METHODS
         return False
 
 
@@ -135,20 +155,16 @@ class ShiftAssignmentPermission(BasePermission):
         if not (request.user and request.user.is_authenticated and request.user.role):
             return False
         role_name = request.user.role.name
-        if role_name in ('ADMIN', 'SUPERVISOR'):
+        if role_name in ('ADMIN', 'SUPERVISOR', 'MANAGER'):
             return True
-        if role_name == 'MANAGER':
-            return request.method in SAFE_METHODS
         if role_name == 'GUARD':
             return request.method in SAFE_METHODS
         return False
 
     def has_object_permission(self, request, view, obj):
         role_name = request.user.role.name
-        if role_name in ('ADMIN', 'SUPERVISOR'):
+        if role_name in ('ADMIN', 'SUPERVISOR', 'MANAGER'):
             return True
-        if role_name == 'MANAGER':
-            return request.method in SAFE_METHODS
         if role_name == 'GUARD':
             profile = getattr(request.user, 'employee_profile', None)
             return request.method in SAFE_METHODS and profile and obj.employee_id == profile.id
@@ -179,18 +195,12 @@ class IsOwnPayslipOrAdmin(BasePermission):
 class PayrollPeriodPermission(BasePermission):
     """
     ADMIN: full CRUD (create periods, close them, etc.).
-    MANAGER: read-only (list/retrieve) — can see periods exist, can't create/edit.
-    Everyone else: no access.
+    Everyone else, including MANAGER: no access — Manager only sees Payslips.
     """
     def has_permission(self, request, view):
         if not (request.user and request.user.is_authenticated and request.user.role):
             return False
-        role_name = request.user.role.name
-        if role_name == 'ADMIN':
-            return True
-        if role_name == 'MANAGER':
-            return request.method in SAFE_METHODS
-        return False
+        return request.user.role.name == 'ADMIN'
 
 class IsDirectorOrSecretary(IsManagerOrAdmin):
     """

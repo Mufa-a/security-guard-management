@@ -1,12 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { ArrowLeft, Printer } from 'lucide-react';
 import { getPayslip, updatePayslipStatus } from '../../api/payrollApi';
 import { useAuth } from '../auth/AuthContext';
 import type { Payslip, PayslipStatus } from '../../types/payroll';
 import logo from '../../assets/crimecurb-logo.png';
+import { formatKES, formatDate } from '../../utils/payrollFormat';
+import PayrollStatusBadge from '../../components/payroll/PayrollStatusBadge';
 
-function formatKES(value: string): string {
-  return new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(parseFloat(value));
+function LineItem({ label, value, negative = false }: { label: string; value: string; negative?: boolean }) {
+  return (
+    <tr className="border-t border-slate-100">
+      <td className="py-2.5 text-slate-600">{label}</td>
+      <td className={`py-2.5 text-right tabular-nums font-medium ${negative ? 'text-red-600' : 'text-slate-800'}`}>
+        {negative && '− '}{value}
+      </td>
+    </tr>
+  );
 }
 
 export default function PayslipDetailPage() {
@@ -36,36 +46,45 @@ export default function PayslipDetailPage() {
     }
   }
 
-  if (isLoading) return <p className="text-slate-500">Loading...</p>;
-  if (error || !payslip) return <p className="text-red-600">{error ?? 'Payslip not found.'}</p>;
+  if (isLoading) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="h-4 w-20 bg-slate-200 rounded animate-pulse mb-6" />
+        <div className="h-[520px] bg-white rounded-2xl border border-slate-200/70" />
+      </div>
+    );
+  }
+  if (error || !payslip) {
+    return <p className="text-red-600 text-sm bg-red-50 border border-red-100 rounded-lg px-3 py-2 max-w-2xl mx-auto">{error ?? 'Payslip not found.'}</p>;
+  }
+
+  const showStamp = payslip.status === 'PAID' || payslip.status === 'APPROVED';
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-6 print:hidden">
-        <Link to={-1 as unknown as string} className="text-blue-700 hover:underline text-sm">
-          &larr; Back
+      <div className="flex items-center justify-between mb-5 print:hidden">
+        <Link to={-1 as unknown as string} className="inline-flex items-center gap-1.5 text-sm font-medium text-crimecurb-navy hover:underline">
+          <ArrowLeft size={15} /> Back
         </Link>
         <button
           onClick={() => window.print()}
-          className="bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+          className="inline-flex items-center gap-1.5 bg-crimecurb-navy hover:bg-crimecurb-navy/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
         >
-          Print / Save as PDF
+          <Printer size={15} /> Print / Save as PDF
         </button>
       </div>
 
       {isAdmin && (
-        <div className="bg-white rounded-lg shadow p-4 mb-4 flex items-center justify-between print:hidden">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-500">Status:</span>
-            <span className="px-2 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700">
-              {payslip.status}
-            </span>
+        <div className="bg-white rounded-xl border border-slate-200/70 shadow-sm p-4 mb-4 flex items-center justify-between print:hidden">
+          <div className="flex items-center gap-2.5">
+            <span className="text-sm text-slate-500">Status</span>
+            <PayrollStatusBadge status={payslip.status} />
           </div>
           <div className="flex gap-2">
             {payslip.status === 'DRAFT' && (
               <button
                 onClick={() => handleStatusChange('APPROVED')}
-                className="bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-medium px-4 py-2 rounded transition-colors"
+                className="bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
               >
                 Mark as Approved
               </button>
@@ -73,7 +92,7 @@ export default function PayslipDetailPage() {
             {payslip.status !== 'PAID' && (
               <button
                 onClick={() => handleStatusChange('PAID')}
-                className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
               >
                 Mark as Paid
               </button>
@@ -82,88 +101,78 @@ export default function PayslipDetailPage() {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow print:shadow-none p-8">
-        <div className="flex items-center gap-3 border-b border-slate-200 pb-4 mb-6">
-          <img src={logo} alt="Crimecurb" className="h-12 w-12 object-contain" />
+      {/* The document itself */}
+      <div className="relative bg-white rounded-2xl border border-slate-200/70 shadow-sm print:shadow-none print:border-0 p-8 overflow-hidden">
+        {showStamp && (
+          <div
+            className="absolute top-8 right-8 border-2 border-emerald-600/25 text-emerald-600/25 rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] select-none pointer-events-none"
+            style={{ transform: 'rotate(8deg)' }}
+            aria-hidden="true"
+          >
+            {payslip.status}
+          </div>
+        )}
+
+        <div className="flex items-center gap-3 border-b border-slate-200 pb-5 mb-6">
+          <img src={logo} alt="Crimecurb" className="h-12 w-12 object-contain shrink-0" />
           <div>
-            <p className="font-bold text-slate-800 text-lg leading-tight">Crimecurb Security Services</p>
-            <p className="text-xs text-slate-500">Official Payslip</p>
+            <p className="font-display font-bold text-slate-800 text-lg leading-tight">Crimecurb Security Services</p>
+            <p className="text-[11px] font-mono uppercase tracking-widest text-slate-400 mt-0.5">Official Payslip</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
+        <div className="grid grid-cols-2 gap-y-4 gap-x-4 mb-7 text-sm">
           <div>
-            <p className="text-slate-400 text-xs uppercase mb-1">Employee</p>
+            <p className="text-[11px] font-mono uppercase tracking-widest text-slate-400 mb-1">Employee</p>
             <p className="font-medium text-slate-800">{payslip.employee_name}</p>
           </div>
           <div>
-            <p className="text-slate-400 text-xs uppercase mb-1">Pay Period</p>
+            <p className="text-[11px] font-mono uppercase tracking-widest text-slate-400 mb-1">Pay Period</p>
             <p className="font-medium text-slate-800">{payslip.period_detail}</p>
           </div>
           <div>
-            <p className="text-slate-400 text-xs uppercase mb-1">Status</p>
+            <p className="text-[11px] font-mono uppercase tracking-widest text-slate-400 mb-1">Status</p>
             <p className="font-medium text-slate-800">{payslip.status}</p>
           </div>
           <div>
-            <p className="text-slate-400 text-xs uppercase mb-1">Generated</p>
-            <p className="font-medium text-slate-800">
-              {new Date(payslip.generated_at).toLocaleDateString()}
-            </p>
+            <p className="text-[11px] font-mono uppercase tracking-widest text-slate-400 mb-1">Generated</p>
+            <p className="font-medium text-slate-800">{formatDate(payslip.generated_at)}</p>
           </div>
         </div>
 
-        <table className="w-full text-sm mb-2">
+        <p className="text-[11px] font-mono uppercase tracking-widest text-slate-400 mb-1">Earnings</p>
+        <table className="w-full text-sm mb-5">
           <tbody>
-            <tr className="border-t border-slate-100">
-              <td className="py-2 text-slate-600">Basic Salary</td>
-              <td className="py-2 text-right font-medium">{formatKES(payslip.basic_salary)}</td>
-            </tr>
-            <tr className="border-t border-slate-100">
-              <td className="py-2 text-slate-600">Allowances</td>
-              <td className="py-2 text-right font-medium">{formatKES(payslip.total_allowances)}</td>
-            </tr>
+            <LineItem label="Basic Salary" value={formatKES(payslip.basic_salary)} />
+            <LineItem label="Allowances" value={formatKES(payslip.total_allowances)} />
             <tr className="border-t border-slate-200 bg-slate-50">
-              <td className="py-2 px-2 font-semibold text-slate-800">Gross Pay</td>
-              <td className="py-2 px-2 text-right font-semibold text-slate-800">
+              <td className="py-2.5 px-2 font-semibold text-slate-800 rounded-l-lg">Total Earnings</td>
+              <td className="py-2.5 px-2 text-right font-semibold text-slate-800 tabular-nums rounded-r-lg">
                 {formatKES(payslip.gross_pay)}
-              </td>
-            </tr>
-
-            <tr className="border-t border-slate-100">
-              <td className="py-2 text-slate-600">NSSF</td>
-              <td className="py-2 text-right text-red-700">− {formatKES(payslip.nssf_employee)}</td>
-            </tr>
-            <tr className="border-t border-slate-100">
-              <td className="py-2 text-slate-600">SHIF</td>
-              <td className="py-2 text-right text-red-700">− {formatKES(payslip.shif_contribution)}</td>
-            </tr>
-            <tr className="border-t border-slate-100">
-              <td className="py-2 text-slate-600">Housing Levy</td>
-              <td className="py-2 text-right text-red-700">− {formatKES(payslip.housing_levy)}</td>
-            </tr>
-            <tr className="border-t border-slate-100">
-              <td className="py-2 text-slate-600">PAYE Tax</td>
-              <td className="py-2 text-right text-red-700">− {formatKES(payslip.paye_tax)}</td>
-            </tr>
-            <tr className="border-t border-slate-100">
-              <td className="py-2 text-slate-600">Other Deductions</td>
-              <td className="py-2 text-right text-red-700">
-                − {formatKES(payslip.total_other_deductions)}
-              </td>
-            </tr>
-
-            <tr className="border-t-2 border-slate-300 bg-blue-50">
-              <td className="py-3 px-2 font-bold text-slate-800">Net Pay</td>
-              <td className="py-3 px-2 text-right font-bold text-blue-900">
-                {formatKES(payslip.net_pay)}
               </td>
             </tr>
           </tbody>
         </table>
 
+        <p className="text-[11px] font-mono uppercase tracking-widest text-slate-400 mb-1">Deductions</p>
+        <table className="w-full text-sm mb-2">
+          <tbody>
+            <LineItem label="NSSF" value={formatKES(payslip.nssf_employee)} negative />
+            <LineItem label="SHIF" value={formatKES(payslip.shif_contribution)} negative />
+            <LineItem label="Housing Levy" value={formatKES(payslip.housing_levy)} negative />
+            <LineItem label="PAYE Tax" value={formatKES(payslip.paye_tax)} negative />
+            <LineItem label="Other Deductions" value={formatKES(payslip.total_other_deductions)} negative />
+          </tbody>
+        </table>
+
+        <div className="border-t-2 border-crimecurb-navy/15 bg-crimecurb-navy/[0.03] rounded-lg px-4 py-4 mt-4 flex items-center justify-between">
+          <p className="font-display font-bold text-slate-800">Net Pay</p>
+          <p className="font-display text-2xl font-bold text-crimecurb-navy tabular-nums">{formatKES(payslip.net_pay)}</p>
+        </div>
+
         <div className="text-center text-xs text-slate-400 mt-8 pt-4 border-t border-slate-200">
           <p>
-            Generated by Erip <span className="text-purple-600 font-semibold">⚡</span> Technologies
+            Generated by Erip <span className="text-crimecurb-red font-semibold">⚡</span> Technologies
           </p>
           <p>0710951879</p>
         </div>

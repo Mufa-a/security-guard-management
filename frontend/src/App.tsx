@@ -18,6 +18,7 @@ import ShiftFormPage from './features/shifts/ShiftFormPage';
 import ShiftAssignGuardsPage from './features/shifts/ShiftAssignGuardsPage';
 import AttendanceManagementPage from './features/attendance/AttendanceManagementPage';
 import IncidentManagementPage from './features/incidents/IncidentManagementPage';
+import IncidentDetailPage from './features/incidents/IncidentDetailPage';
 import InvoiceListPage from './features/invoices/InvoiceListPage';
 import InvoiceFormPage from './features/invoices/InvoiceFormPage';
 import InvoiceLineItemsPage from './features/invoices/InvoiceLineItemsPage';
@@ -76,30 +77,201 @@ function App() {
         }
       >
         <Route path="/dashboard" element={<DashboardHome />} />
-        <Route path="/staff" element={<StaffListPage />} />
-        <Route path="/staff/new" element={<StaffFormPage />} />
-        <Route path="/staff/:id" element={<StaffFormPage />} />
-        <Route path="/clients" element={<ClientListPage />} />
-        <Route path="/clients/new" element={<ClientFormPage />} />
-        <Route path="/clients/:id" element={<ClientFormPage />} />
-        <Route path="/sites" element={<SiteListPage />} />
-        <Route path="/sites/new" element={<SiteFormPage />} />
-        <Route path="/sites/:id" element={<SiteFormPage />} />
-        <Route path="/my-shifts" element={<MyShiftsPage />} />
-        <Route path="/my-attendance" element={<MyAttendancePage />} />
-        <Route path="/my-incidents" element={<MyIncidentsPage />} />
+
+        <Route
+          path="/staff"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <StaffListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/new"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <StaffFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/:id"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <StaffFormPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/clients"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <ClientListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/clients/new"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <ClientFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/clients/:id"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <ClientFormPage />
+            </ProtectedRoute>
+          }
+        />
+
+      <Route
+  path="/sites"
+  element={
+    <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+      <SiteListPage />
+    </ProtectedRoute>
+  }
+/>
+        <Route
+          path="/sites/:id"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+              <SiteFormPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-shifts"
+          element={
+            <ProtectedRoute allowedRoles={['GUARD']}>
+              <MyShiftsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-attendance"
+          element={
+            <ProtectedRoute allowedRoles={['GUARD']}>
+              <MyAttendancePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-incidents"
+          element={
+            <ProtectedRoute allowedRoles={['GUARD']}>
+              <MyIncidentsPage />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/shifts" element={<ShiftListPage />} />
-        <Route path="/shifts/new" element={<ShiftFormPage />} />
-        <Route path="/shifts/:id" element={<ShiftFormPage />} />
-        <Route path="/shifts/:id/assign" element={<ShiftAssignGuardsPage />} />
-        <Route path="/attendance" element={<AttendanceManagementPage />} />
-        <Route path="/incidents" element={<IncidentManagementPage />} />
-        <Route path="/invoices" element={<InvoiceListPage />} />
-        <Route path="/invoices/new" element={<InvoiceFormPage />} />
-        <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
-        <Route path="/invoices/:id/edit" element={<InvoiceFormPage />} />
-        <Route path="/invoices/:id/line-items" element={<InvoiceLineItemsPage />} />
+
+        <Route
+          path="/shifts"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+              <ShiftListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/shifts/new"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+              <ShiftFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/shifts/:id"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+              <ShiftFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/shifts/:id/assign"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+              <ShiftAssignGuardsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/attendance"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+              <AttendanceManagementPage />
+            </ProtectedRoute>
+          }
+        />
+       
+        <Route
+          path="/incidents"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+              <IncidentManagementPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+  path="/incidents/:id"
+  element={
+    <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR', 'GUARD']}>
+      <IncidentDetailPage />
+    </ProtectedRoute>
+  }
+/>
+
+        <Route
+          path="/invoices"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <InvoiceListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invoices/new"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <InvoiceFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invoices/:id"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <InvoiceDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invoices/:id/edit"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <InvoiceFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invoices/:id/line-items"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <InvoiceLineItemsPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/reports"
@@ -278,14 +450,70 @@ function App() {
           }
         />
 
-        <Route path="/payroll" element={<PayrollPeriodListPage />} />
-        <Route path="/payroll/payslips" element={<PayslipListPage />} />
-        <Route path="/payroll/payslips/:id" element={<PayslipDetailPage />} />
-        <Route path="/active-guards" element={<ActiveGuardsPage />} />
-        <Route path="/active-guards/inactive" element={<InactiveGuardsPage />} />
-        <Route path="/expenses" element={<ExpenseListPage />} />
-        <Route path="/expenses/new" element={<ExpenseFormPage />} />
-        <Route path="/expenses/:id" element={<ExpenseFormPage />} />
+        <Route
+  path="/payroll"
+  element={
+    <ProtectedRoute allowedRoles={['ADMIN']}>
+      <PayrollPeriodListPage />
+    </ProtectedRoute>
+  }
+/>
+        <Route
+          path="/payroll/payslips"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <PayslipListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payroll/payslips/:id"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <PayslipDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/active-guards"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+              <ActiveGuardsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/active-guards/inactive"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+              <InactiveGuardsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/expenses"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <ExpenseListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/expenses/new"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <ExpenseFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/expenses/:id"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <ExpenseFormPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/staff/:id/salary"
           element={
@@ -294,7 +522,23 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/payroll/generate/:periodId" element={<GeneratePayslipsPage />} />
+        <Route
+          path="/payroll/generate/:periodId"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <GeneratePayslipsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/:id/salary"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
+              <EmployeeSalaryPage />
+            </ProtectedRoute>
+          }
+        />
+        
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

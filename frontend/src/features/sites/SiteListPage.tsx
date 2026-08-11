@@ -8,6 +8,7 @@ import type { Site } from '../../types/sites';
 export default function SiteListPage() {
   const { user } = useAuth();
   const isAdmin = user?.role === 'ADMIN';
+  const canCreate = user?.role === 'ADMIN' || user?.role === 'MANAGER';
 
   const [sites, setSites] = useState<Site[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +21,9 @@ export default function SiteListPage() {
       .finally(() => setIsLoading(false));
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   async function handleDelete(id: string, name: string) {
     if (!confirm(`Delete site "${name}"? This cannot be undone.`)) return;
@@ -36,12 +39,14 @@ export default function SiteListPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
         <h1 className="text-2xl font-bold text-slate-800">Sites</h1>
-        <Link
-          to="/sites/new"
-          className="bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors inline-block text-center"
-        >
-          + Add Site
-        </Link>
+        {canCreate && (
+          <Link
+            to="/sites/new"
+            className="bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors inline-block text-center"
+          >
+            + Add Site
+          </Link>
+        )}
       </div>
 
       {isLoading && <p className="text-slate-500">Loading...</p>}

@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react';
 import { useAuth } from '../features/auth/AuthContext';
 import { NAV_ITEMS } from '../routes/navConfig';
 import logo from '../assets/crimecurb-logo.png';
+import NotificationBell from '../components/notifications/NotificationBell';
 
 export default function DashboardLayout() {
   const { user, logout } = useAuth();
@@ -91,6 +92,7 @@ export default function DashboardLayout() {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 md:-ml-6">
+        {/* Mobile header — bell added next to the hamburger/logo */}
         <header className="md:hidden flex items-center gap-3 bg-crimecurb-navy text-white px-4 py-3 sticky top-0 z-20 print:hidden">
           <button
             onClick={() => setIsSidebarOpen(true)}
@@ -100,10 +102,18 @@ export default function DashboardLayout() {
             <Menu size={22} />
           </button>
           <img src={logo} alt="Crimecurb" className="h-7 w-7 object-contain" />
-          <p className="font-semibold text-sm tracking-tight">Crimecurb</p>
+          <p className="font-semibold text-sm tracking-tight flex-1">Crimecurb</p>
+          <NotificationBell />
         </header>
 
-        <main className="relative z-10 flex-1 md:rounded-l-[24px] bg-slate-100 overflow-y-auto p-4 md:p-6 print:p-0 print:w-full print:ml-0 print:rounded-none">
+        {/* Desktop — no shared top bar exists (each page renders its own
+            header inside <Outlet />), so the bell is pinned here instead
+            of being duplicated into every page component. */}
+        <div className="hidden md:flex justify-end px-6 pt-4 print:hidden">
+          <NotificationBell />
+        </div>
+
+        <main className="relative z-10 flex-1 md:rounded-l-[24px] bg-slate-100 overflow-y-auto p-4 md:p-6 print:p-0 print:w-full print:ml-0 print:rounded-none md:-mt-2">
           <Outlet />
         </main>
       </div>

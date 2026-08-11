@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Trash2 } from 'lucide-react';
+import { ArrowLeft, Trash2, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { getEmployeeProfile } from '../../api/staffApi';
 import {
@@ -21,10 +21,7 @@ import type {
   Allowance,
   Deduction,
 } from '../../types/payroll';
-
-function formatKES(value: string): string {
-  return new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(parseFloat(value));
-}
+import { formatKES } from '../../utils/payrollFormat';
 
 const FREQUENCIES: PaymentFrequency[] = ['MONTHLY', 'WEEKLY', 'BI_WEEKLY'];
 const ALLOWANCE_TYPES = ['HOUSING', 'TRANSPORT', 'MEDICAL', 'COMMISSION', 'OTHER'];
@@ -77,31 +74,40 @@ export default function EmployeeSalaryPage() {
   if (!canEdit) {
     return (
       <div className="max-w-xl">
-        <p className="bg-red-50 text-red-700 text-sm rounded p-4 border border-red-200">
-          You don't have access to salary information.
-        </p>
+        <div className="bg-red-50 border border-red-100 rounded-xl p-5 flex items-start gap-3">
+          <ShieldAlert size={18} className="text-red-500 shrink-0 mt-0.5" />
+          <p className="text-sm text-red-700">You don't have access to salary information.</p>
+        </div>
       </div>
     );
   }
 
-  if (isLoading) return <p className="text-slate-500">Loading...</p>;
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl">
+        <div className="h-4 w-40 bg-slate-200 rounded animate-pulse mb-6" />
+        <div className="h-8 w-64 bg-slate-200 rounded animate-pulse mb-6" />
+        <div className="h-64 bg-white rounded-xl border border-slate-200/70" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl">
       <button
         onClick={() => navigate(`/staff/${id}`)}
-        className="text-blue-700 hover:underline text-sm mb-4"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-crimecurb-navy hover:underline mb-4"
       >
-        &larr; Back to Employee Profile
+        <ArrowLeft size={15} /> Back to Employee Profile
       </button>
 
-      <h1 className="text-2xl font-bold text-slate-800 mb-1">
+      <h1 className="font-display text-2xl font-bold text-slate-800 mb-0.5">
         Salary — {employee?.user.first_name} {employee?.user.last_name}
       </h1>
-      <p className="text-slate-500 mb-6">{employee?.employee_number}</p>
+      <p className="text-sm text-slate-400 mb-6">{employee?.employee_number}</p>
 
       {error && (
-        <p className="bg-amber-50 text-amber-800 text-sm rounded p-3 mb-4 border border-amber-200">
+        <p className="bg-amber-50 text-amber-800 text-sm rounded-lg px-3 py-2.5 mb-4 border border-amber-100">
           {error}
         </p>
       )}
@@ -114,7 +120,7 @@ export default function EmployeeSalaryPage() {
         >
           Details
         </Link>
-        <span className="px-4 py-2 text-sm font-medium text-blue-900 border-b-2 border-blue-900 whitespace-nowrap">
+        <span className="px-4 py-2 text-sm font-medium text-crimecurb-navy border-b-2 border-crimecurb-red whitespace-nowrap">
           Salary
         </span>
       </div>
@@ -125,9 +131,9 @@ export default function EmployeeSalaryPage() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium capitalize transition-colors whitespace-nowrap flex-shrink-0 ${
+            className={`px-3.5 py-1.5 rounded-full text-sm font-medium capitalize transition-colors whitespace-nowrap flex-shrink-0 ${
               activeTab === tab
-                ? 'bg-blue-900 text-white'
+                ? 'bg-crimecurb-navy text-white'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
@@ -137,11 +143,7 @@ export default function EmployeeSalaryPage() {
       </div>
 
       {activeTab === 'overview' && (
-        <OverviewSection
-          employeeId={id!}
-          current={current}
-          onSaved={reload}
-        />
+        <OverviewSection employeeId={id!} current={current} onSaved={reload} />
       )}
       {activeTab === 'allowances' && (
         <AllowanceDeductionSection
@@ -221,64 +223,62 @@ function OverviewSection({
   return (
     <div>
       {!isEditing && (
-        <div className="bg-white rounded-lg shadow p-6 mb-4">
+        <div className="bg-white rounded-xl border border-slate-200/70 shadow-sm p-6 mb-4">
           {current ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               <div>
-                <p className="text-xs text-slate-400 uppercase mb-1">Basic Salary</p>
-                <p className="text-2xl font-bold text-blue-900">{formatKES(current.basic_salary)}</p>
+                <p className="text-[11px] font-mono uppercase tracking-widest text-slate-400 mb-1">Basic Salary</p>
+                <p className="font-display text-2xl font-bold text-crimecurb-navy tabular-nums">{formatKES(current.basic_salary)}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-400 uppercase mb-1">Payment Frequency</p>
+                <p className="text-[11px] font-mono uppercase tracking-widest text-slate-400 mb-1">Payment Frequency</p>
                 <p className="font-medium text-slate-800">{current.payment_frequency}</p>
               </div>
               {current.overtime_rate && (
                 <div>
-                  <p className="text-xs text-slate-400 uppercase mb-1">Overtime Rate</p>
-                  <p className="font-medium text-slate-800">{formatKES(current.overtime_rate)}</p>
+                  <p className="text-[11px] font-mono uppercase tracking-widest text-slate-400 mb-1">Overtime Rate</p>
+                  <p className="font-medium text-slate-800 tabular-nums">{formatKES(current.overtime_rate)}</p>
                 </div>
               )}
             </div>
           ) : (
-            <p className="text-slate-400">No salary set for this employee.</p>
+            <p className="text-slate-400 text-sm">No salary set for this employee.</p>
           )}
         </div>
       )}
 
       {error && (
-        <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-4 border border-red-200">
-          {error}
-        </p>
+        <p className="bg-red-50 text-red-700 text-sm rounded-lg px-3 py-2 mb-4 border border-red-100">{error}</p>
       )}
 
       {!isEditing && (
         <button
           onClick={() => setIsEditing(true)}
-          className="bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+          className="bg-crimecurb-navy hover:bg-crimecurb-navy/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
         >
           {current ? 'Edit Salary' : 'Set Salary'}
         </button>
       )}
 
       {isEditing && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200/70 shadow-sm p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-slate-700 mb-1">Basic Salary (KES)</label>
+              <label className="block text-sm text-slate-600 mb-1">Basic Salary (KES)</label>
               <input
                 type="number"
                 value={form.basic_salary}
                 onChange={(e) => handleChange('basic_salary', e.target.value)}
                 required
-                className="w-full px-3 py-2 rounded border border-slate-300"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm text-slate-700 mb-1">Payment Frequency</label>
+              <label className="block text-sm text-slate-600 mb-1">Payment Frequency</label>
               <select
                 value={form.payment_frequency}
                 onChange={(e) => handleChange('payment_frequency', e.target.value)}
-                className="w-full px-3 py-2 rounded border border-slate-300"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
               >
                 {FREQUENCIES.map((f) => (
                   <option key={f} value={f}>{f}</option>
@@ -287,26 +287,26 @@ function OverviewSection({
             </div>
           </div>
           <div>
-            <label className="block text-sm text-slate-700 mb-1">Overtime Rate (optional)</label>
+            <label className="block text-sm text-slate-600 mb-1">Overtime Rate (optional)</label>
             <input
               type="number"
               value={form.overtime_rate}
               onChange={(e) => handleChange('overtime_rate', e.target.value)}
-              className="w-full sm:w-1/2 px-3 py-2 rounded border border-slate-300"
+              className="w-full sm:w-1/2 px-3 py-2 rounded-lg border border-slate-300 text-sm"
             />
           </div>
           <div className="flex gap-3">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-5 py-2 rounded transition-colors disabled:opacity-50"
+              className="bg-crimecurb-navy hover:bg-crimecurb-navy/90 text-white font-semibold px-5 py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
             >
-              {isSubmitting ? 'Saving...' : 'Save'}
+              {isSubmitting ? 'Saving…' : 'Save'}
             </button>
             <button
               type="button"
               onClick={() => setIsEditing(false)}
-              className="text-slate-600 hover:text-slate-800 px-5 py-2"
+              className="text-slate-500 hover:text-slate-700 px-3 py-2 text-sm"
             >
               Cancel
             </button>
@@ -391,15 +391,15 @@ function AllowanceDeductionSection({
 
   return (
     <div>
-      <div className="bg-white rounded-lg shadow overflow-x-auto mb-4">
+      <div className="bg-white rounded-xl border border-slate-200/70 shadow-sm overflow-x-auto mb-4">
         <table className="w-full text-sm text-left whitespace-nowrap">
-          <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
+          <thead className="bg-slate-50 text-slate-400 text-[11px] font-mono uppercase tracking-widest">
             <tr>
-              <th className="px-4 py-3">Type</th>
-              <th className="px-4 py-3">Amount</th>
-              <th className="px-4 py-3">Recurring</th>
-              {kind === 'allowance' && <th className="px-4 py-3">Taxable</th>}
-              <th className="px-4 py-3">Active</th>
+              <th className="px-4 py-3 font-medium">Type</th>
+              <th className="px-4 py-3 font-medium text-right">Amount</th>
+              <th className="px-4 py-3 font-medium">Recurring</th>
+              {kind === 'allowance' && <th className="px-4 py-3 font-medium">Taxable</th>}
+              <th className="px-4 py-3 font-medium">Active</th>
               {isAdmin && <th className="px-4 py-3"></th>}
             </tr>
           </thead>
@@ -407,9 +407,9 @@ function AllowanceDeductionSection({
             {items.map((item) => {
               const typeLabel = 'allowance_type' in item ? item.allowance_type : item.deduction_type;
               return (
-                <tr key={item.id} className="border-t border-slate-100">
+                <tr key={item.id} className="border-t border-slate-100 hover:bg-slate-50/60 transition-colors">
                   <td className="px-4 py-3 font-medium text-slate-800">{typeLabel}</td>
-                  <td className="px-4 py-3">{formatKES(item.amount)}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{formatKES(item.amount)}</td>
                   <td className="px-4 py-3 text-slate-500">{item.is_recurring ? 'Yes' : 'No'}</td>
                   {kind === 'allowance' && (
                     <td className="px-4 py-3 text-slate-500">
@@ -418,8 +418,8 @@ function AllowanceDeductionSection({
                   )}
                   <td className="px-4 py-3">
                     <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        item.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                        item.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
                       }`}
                     >
                       {item.is_active ? 'Active' : 'Inactive'}
@@ -429,9 +429,9 @@ function AllowanceDeductionSection({
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => handleDelete(item.id, typeLabel)}
-                        className="text-red-600 hover:text-red-800 flex items-center gap-1 ml-auto"
+                        className="text-red-600 hover:text-red-800 flex items-center gap-1 ml-auto text-sm"
                       >
-                        <Trash2 size={14} /> Delete
+                        <Trash2 size={13} /> Delete
                       </button>
                     </td>
                   )}
@@ -440,7 +440,7 @@ function AllowanceDeductionSection({
             })}
             {items.length === 0 && (
               <tr>
-                <td colSpan={isAdmin ? 6 : 5} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={isAdmin ? 6 : 5} className="px-4 py-8 text-center text-slate-400 text-sm">
                   No {kind}s recorded.
                 </td>
               </tr>
@@ -450,29 +450,27 @@ function AllowanceDeductionSection({
       </div>
 
       {error && (
-        <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-4 border border-red-200">
-          {error}
-        </p>
+        <p className="bg-red-50 text-red-700 text-sm rounded-lg px-3 py-2 mb-4 border border-red-100">{error}</p>
       )}
 
       {!showForm && (
         <button
           onClick={() => setShowForm(true)}
-          className="bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+          className="bg-crimecurb-navy hover:bg-crimecurb-navy/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
         >
           + Add {kind === 'allowance' ? 'Allowance' : 'Deduction'}
         </button>
       )}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200/70 shadow-sm p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-slate-700 mb-1">Type</label>
+              <label className="block text-sm text-slate-600 mb-1">Type</label>
               <select
                 value={form.type}
                 onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))}
-                className="w-full px-3 py-2 rounded border border-slate-300"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
               >
                 {typeOptions.map((t) => (
                   <option key={t} value={t}>{t}</option>
@@ -480,13 +478,13 @@ function AllowanceDeductionSection({
               </select>
             </div>
             <div>
-              <label className="block text-sm text-slate-700 mb-1">Amount (KES)</label>
+              <label className="block text-sm text-slate-600 mb-1">Amount (KES)</label>
               <input
                 type="number"
                 value={form.amount}
                 onChange={(e) => setForm((prev) => ({ ...prev, amount: e.target.value }))}
                 required
-                className="w-full px-3 py-2 rounded border border-slate-300"
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm"
               />
             </div>
           </div>
@@ -496,6 +494,7 @@ function AllowanceDeductionSection({
                 type="checkbox"
                 checked={form.is_recurring}
                 onChange={(e) => setForm((prev) => ({ ...prev, is_recurring: e.target.checked }))}
+                className="rounded border-slate-300"
               />
               Recurring
             </label>
@@ -505,6 +504,7 @@ function AllowanceDeductionSection({
                   type="checkbox"
                   checked={form.is_taxable}
                   onChange={(e) => setForm((prev) => ({ ...prev, is_taxable: e.target.checked }))}
+                  className="rounded border-slate-300"
                 />
                 Taxable
               </label>
@@ -514,14 +514,14 @@ function AllowanceDeductionSection({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-5 py-2 rounded transition-colors disabled:opacity-50"
+              className="bg-crimecurb-navy hover:bg-crimecurb-navy/90 text-white font-semibold px-5 py-2 rounded-lg transition-colors disabled:opacity-50 text-sm"
             >
-              {isSubmitting ? 'Saving...' : 'Save'}
+              {isSubmitting ? 'Saving…' : 'Save'}
             </button>
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="text-slate-600 hover:text-slate-800 px-5 py-2"
+              className="text-slate-500 hover:text-slate-700 px-3 py-2 text-sm"
             >
               Cancel
             </button>

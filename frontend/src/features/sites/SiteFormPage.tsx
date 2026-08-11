@@ -4,11 +4,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getClients } from '../../api/sitesApi';
 import { createSite, getSite, updateSite } from '../../api/sitesApi';
 import type { Client } from '../../types/sites';
+import { useAuth } from '../auth/AuthContext'; // adjust path to match your project
 
 export default function SiteFormPage() {
   const { id } = useParams();
   const isEditMode = Boolean(id);
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isReadOnly = user?.role === 'SUPERVISOR';
 
   const [clients, setClients] = useState<Client[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +74,7 @@ export default function SiteFormPage() {
   return (
     <div className="max-w-xl">
       <h1 className="text-2xl font-bold text-slate-800 mb-6">
-        {isEditMode ? 'Edit Site' : 'Add Site'}
+        {isReadOnly ? 'View Site' : isEditMode ? 'Edit Site' : 'Add Site'}
       </h1>
 
       {error && (
@@ -157,7 +160,7 @@ export default function SiteFormPage() {
             onClick={() => navigate('/sites')}
             className="text-slate-600 hover:text-slate-800 px-5 py-2"
           >
-            Cancel
+            {isReadOnly ? 'Back' : 'Cancel'}
           </button>
         </div>
       </form>
