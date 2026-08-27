@@ -1,5 +1,10 @@
 import apiClient from './client';
-import type { Invoice, InvoiceCreatePayload, InvoiceLineItem, InvoiceLineItemCreatePayload } from '../types/invoices';
+import type {
+  Invoice,
+  InvoiceCreatePayload,
+  InvoiceLineItem,
+  InvoiceLineItemCreatePayload,
+} from '../types/invoices';
 
 export async function getInvoices(): Promise<Invoice[]> {
   const { data } = await apiClient.get('/invoices/invoices/');
@@ -32,4 +37,9 @@ export async function createLineItem(payload: InvoiceLineItemCreatePayload): Pro
 
 export async function deleteLineItem(id: string): Promise<void> {
   await apiClient.delete(`/invoices/line-items/${id}/`);
+}
+
+export async function recordInvoicePayment(id: string, amount: number): Promise<Invoice> {
+  const { data } = await apiClient.post(`/invoices/invoices/${id}/record-payment/`, { amount });
+  return data;
 }

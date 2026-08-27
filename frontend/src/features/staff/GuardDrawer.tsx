@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, Phone, Mail, MapPin, Clock, Calendar, FileText, Wallet, ShieldCheck, ShieldOff, UserMinus, AlertTriangle, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -10,7 +12,7 @@ interface GuardDrawerProps {
   site: string | undefined;
   shiftTime: { start: string; end: string } | undefined;
   openIncidentsAtSite: number;
-  attendancePercent: number | null; // null when not enough data yet
+  attendancePercent: number | null;
   onClose: () => void;
   onSetStatus: (id: string, status: string) => void;
   onDelete: (id: string, name: string) => void;
@@ -38,8 +40,18 @@ export default function GuardDrawer({
   const { user } = useAuth();
   const canManageStatus = user?.role === 'ADMIN' || user?.role === 'MANAGER';
   const canManageSalary = user?.role === 'ADMIN' || user?.role === 'MANAGER';
+  const panelRef = useRef<HTMLDivElement>(null);
 
-  return (
+  // Reset scroll position every time a different guard is selected,
+  // so switching guards while the drawer is open doesn't inherit the
+  // previous guard's scroll offset.
+  useEffect(() => {
+    if (guard && panelRef.current) {
+      panelRef.current.scrollTop = 0;
+    }
+  }, [guard]);
+
+  const content = (
     <AnimatePresence>
       {guard && (
         <>
@@ -51,10 +63,12 @@ export default function GuardDrawer({
             className="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] z-40"
           />
           <motion.div
+            ref={panelRef}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 320, damping: 34 }}
+            style={{ overflowAnchor: 'none' }}
             className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-50 shadow-2xl overflow-y-auto"
           >
             <div className="sticky top-0 bg-white/90 backdrop-blur border-b border-slate-100 px-5 py-4 flex items-center justify-between z-10">
@@ -206,4 +220,10 @@ export default function GuardDrawer({
       )}
     </AnimatePresence>
   );
+
+  // Portal straight to <body> — this is the fix. It guarantees the drawer's
+  // `fixed` positioning is always relative to the real viewport, no matter
+  // what filter/backdrop-blur/transform styling exists on any ancestor
+  // (like the glass `<main>` in DashboardLayout).
+  return createPortal(content, document.body);
 }

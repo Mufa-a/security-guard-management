@@ -95,28 +95,32 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-100">
+    <div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-blue-500 via-indigo-300 to-red-400 relative overflow-hidden">
+      {/* floating blobs behind the glass to give the blur something to bend */}
+      <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-blue-600/40 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-red-500/40 blur-3xl" />
+
       <div className="flex-1 flex items-center justify-center px-4">
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm border-t-4 border-red-600"
+          className="bg-white/10 backdrop-blur-2xl backdrop-saturate-150 p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-white/30 border-t-4 border-t-red-500/80 ring-1 ring-white/20"
         >
           <div className="flex flex-col items-center mb-6">
-            <img src={logo} alt="Crimecurb Security Services" className="h-20 w-20 object-contain mb-3" />
-            <h1 className="text-xl font-bold text-blue-900 text-center leading-tight">
+            <img src={logo} alt="Crimecurb Security Services" className="h-20 w-20 object-contain mb-3 drop-shadow-md" />
+            <h1 className="text-xl font-bold text-blue-950 text-center leading-tight drop-shadow-sm">
               Crimecurb Security Services
             </h1>
-            <p className="text-xs text-slate-500 mt-1 tracking-wide">
+            <p className="text-xs text-slate-700 mt-1 tracking-wide">
               Impartiality, Honesty &amp; Accountability
             </p>
           </div>
 
-          <div className="flex mb-6 bg-slate-100 rounded-lg p-1">
+          <div className="flex mb-6 bg-white/10 backdrop-blur-md rounded-lg p-1 border border-white/30">
             <button
               type="button"
               onClick={() => switchMode('password')}
               className={`flex-1 text-sm font-medium py-1.5 rounded-md transition-colors ${
-                mode === 'password' ? 'bg-white text-blue-900 shadow-sm' : 'text-slate-500'
+                mode === 'password' ? 'bg-white/50 text-blue-950 shadow-sm' : 'text-slate-700'
               }`}
             >
               Email &amp; Password
@@ -125,7 +129,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => switchMode('pin')}
               className={`flex-1 text-sm font-medium py-1.5 rounded-md transition-colors ${
-                mode === 'pin' ? 'bg-white text-blue-900 shadow-sm' : 'text-slate-500'
+                mode === 'pin' ? 'bg-white/50 text-blue-950 shadow-sm' : 'text-slate-700'
               }`}
             >
               Guard PIN Login
@@ -133,42 +137,42 @@ export default function LoginPage() {
           </div>
 
           {isLocked && (
-            <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-4 border border-red-200">
+            <p className="bg-red-500/10 backdrop-blur-sm text-red-800 text-sm rounded p-2 mb-4 border border-red-300/50">
               Your account is temporarily locked due to too many failed login attempts.
               Try again in {formatCountdown(remainingSeconds)}.
             </p>
           )}
 
           {!isLocked && error && (
-            <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-4 border border-red-200">
+            <p className="bg-red-500/10 backdrop-blur-sm text-red-800 text-sm rounded p-2 mb-4 border border-red-300/50">
               {error}
             </p>
           )}
 
           {mode === 'password' ? (
             <>
-              <label className="block text-sm text-slate-700 mb-1">Email</label>
+              <label className="block text-sm text-slate-800 mb-1">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLocked}
-                className="w-full mb-4 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 disabled:bg-slate-100"
+                className="w-full mb-4 px-3 py-2 rounded-lg border border-white/40 bg-white/20 backdrop-blur-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-700 disabled:bg-slate-100/40"
               />
-              <label className="block text-sm text-slate-700 mb-1">Password</label>
+              <label className="block text-sm text-slate-800 mb-1">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLocked}
-                className="w-full mb-6 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 disabled:bg-slate-100"
+                className="w-full mb-6 px-3 py-2 rounded-lg border border-white/40 bg-white/20 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-700 disabled:bg-slate-100/40"
               />
             </>
           ) : (
             <>
-              <label className="block text-sm text-slate-700 mb-1">Employee Number</label>
+              <label className="block text-sm text-slate-800 mb-1">Employee Number</label>
               <input
                 type="text"
                 value={employeeNumber}
@@ -176,9 +180,9 @@ export default function LoginPage() {
                 placeholder="e.g. EMP-0042"
                 required
                 disabled={isLocked}
-                className="w-full mb-4 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 disabled:bg-slate-100"
+                className="w-full mb-4 px-3 py-2 rounded-lg border border-white/40 bg-white/20 backdrop-blur-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-700 disabled:bg-slate-100/40"
               />
-              <label className="block text-sm text-slate-700 mb-1">6-Digit PIN</label>
+              <label className="block text-sm text-slate-800 mb-1">6-Digit PIN</label>
               <input
                 type="password"
                 inputMode="numeric"
@@ -188,7 +192,7 @@ export default function LoginPage() {
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
                 required
                 disabled={isLocked}
-                className="w-full mb-6 px-3 py-2 rounded border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-800 disabled:bg-slate-100 tracking-[0.3em] text-center"
+                className="w-full mb-6 px-3 py-2 rounded-lg border border-white/40 bg-white/20 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-700 disabled:bg-slate-100/40 tracking-[0.3em] text-center"
               />
             </>
           )}
@@ -196,7 +200,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting || isLocked}
-            className="w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-2 rounded transition-colors disabled:opacity-50"
+            className="w-full bg-blue-900/90 hover:bg-blue-800 backdrop-blur-sm text-white font-semibold py-2 rounded-lg transition-colors disabled:opacity-50 shadow-lg"
           >
             {isLocked
               ? `Locked — ${formatCountdown(remainingSeconds)}`

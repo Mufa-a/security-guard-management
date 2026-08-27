@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Search, RefreshCw, Download, ShieldCheck, ShieldOff, AlertCircle, CalendarCheck2 } from 'lucide-react';
 import { getEmployeeProfiles, updateEmployeeProfile, deleteEmployeeProfile } from '../../api/staffApi';
 import { getSiteAssignments, getSites } from '../../api/sitesApi';

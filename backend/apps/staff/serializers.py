@@ -42,10 +42,11 @@ class EmployeeProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeProfile
         fields = [
-            "user", "employee_number", "national_id", "date_of_birth", "gender",
+            "id", "user", "employee_number", "national_id", "date_of_birth", "gender",
             "physical_address", "next_of_kin_name", "next_of_kin_phone",
             "date_employed", "employment_status", "height_cm", "photo",
         ]
+        read_only_fields = ["id"]
 
     def validate_national_id(self, value):
         if not value.isdigit() or not (7 <= len(value) <= 9):

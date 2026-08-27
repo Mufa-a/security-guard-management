@@ -59,8 +59,11 @@ import DataProtectionPolicyPage from './features/policies/DataProtectionPolicyPa
 import AccessControlPolicyPage from './features/policies/AccessControlPolicyPage';
 import ExpenseListPage from './features/expenses/ExpenseListPage';
 import ExpenseFormPage from './features/expenses/ExpenseFormPage';
+import PendingActionsPage from './features/erip/PendingActionsPage';
+import ErpChatWidget from './features/erip/ErpChatWidget';
 function App() {
   return (
+    <>
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/set-pin" element={<ForcePinChangePage />} />
@@ -269,6 +272,15 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
               <InvoiceLineItemsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/erip/pending-actions"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SUPERVISOR']}>
+              <PendingActionsPage />
             </ProtectedRoute>
           }
         />
@@ -530,19 +542,13 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/staff/:id/salary"
-          element={
-            <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}>
-              <EmployeeSalaryPage />
-            </ProtectedRoute>
-          }
-        />
         
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
+    <ErpChatWidget />
+    </>
   );
 }
 

@@ -195,12 +195,20 @@ class IsOwnPayslipOrAdmin(BasePermission):
 class PayrollPeriodPermission(BasePermission):
     """
     ADMIN: full CRUD (create periods, close them, etc.).
-    Everyone else, including MANAGER: no access — Manager only sees Payslips.
+    MANAGER: read-only (list/retrieve) — needed to filter/view payslips
+    by period, but cannot create, edit, or close periods.
+    SUPERVISOR and GUARD: no access at all.
     """
     def has_permission(self, request, view):
         if not (request.user and request.user.is_authenticated and request.user.role):
             return False
-        return request.user.role.name == 'ADMIN'
+        role_name = request.user.role.name
+        if role_name == 'ADMIN':
+            return True
+        if role_name == 'MANAGER':
+            return request.method in SAFE_METHODS
+        return False
+
 
 class IsDirectorOrSecretary(IsManagerOrAdmin):
     """

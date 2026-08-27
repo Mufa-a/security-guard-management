@@ -11,6 +11,11 @@ from decouple import config, Csv
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
+ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY')
+ERIP_MODEL = config('ERIP_MODEL', default='claude-sonnet-4-6')
+LLM_PROVIDER = config('LLM_PROVIDER', default='anthropic')  # 'anthropic' or 'gemini'
+GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
+GEMINI_MODEL = config('GEMINI_MODEL', default='gemini-3.6-flash')
 
 DJANGO_APPS = [
     'django.contrib.admin',
@@ -40,6 +45,7 @@ LOCAL_APPS = [
     'apps.invoices',
     'apps.payroll',
     'apps.expenses',
+    'apps.erip',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -131,6 +137,7 @@ REST_FRAMEWORK = {
     'login': config('THROTTLE_LOGIN_RATE', default='5/minute'),
     'reports': config('THROTTLE_REPORTS_RATE', default='10/minute'),
     'password_reset': config('THROTTLE_PASSWORD_RESET_RATE', default='3/hour'),
+    'erip_chat': config('THROTTLE_ERIP_CHAT_RATE', default='30/minute'),
 },
 }
 SIMPLE_JWT = {

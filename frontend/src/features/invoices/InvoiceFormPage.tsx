@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { Receipt } from 'lucide-react';
+import { Receipt, ArrowLeft } from 'lucide-react';
 import { getClients } from '../../api/sitesApi';
 import { createInvoice, getInvoice, updateInvoice } from '../../api/invoicesApi';
 import type { Client } from '../../types/sites';
 import type { Invoice } from '../../types/invoices';
 
 const STATUSES = ['DRAFT', 'SENT', 'PAID', 'OVERDUE', 'CANCELLED'];
+
+const inputClasses =
+  'w-full px-3 py-2.5 rounded-lg border border-slate-300 text-slate-800 ' +
+  'focus:outline-none focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 transition-colors';
 
 export default function InvoiceFormPage() {
   const { id } = useParams();
@@ -63,54 +67,63 @@ export default function InvoiceFormPage() {
   }
 
   return (
-    <div className="max-w-2xl">
-      <div className="flex items-center justify-between mb-6">
+    <div className="max-w-2xl mx-auto pb-24 sm:pb-0">
+      <Link
+        to="/invoices"
+        className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-700 mb-4 transition-colors"
+      >
+        <ArrowLeft size={14} /> Back to Invoices
+      </Link>
+
+      <div className="flex items-center justify-between mb-6 gap-3">
         <h1 className="text-2xl font-bold text-slate-800">
           {isEditMode ? 'Edit Invoice' : 'Add Invoice'}
         </h1>
         {isEditMode && id && (
           <Link
             to={`/invoices/${id}/line-items`}
-            className="flex items-center gap-1.5 text-sm text-blue-700 hover:underline"
+            className="flex items-center gap-1.5 text-sm text-blue-700 hover:underline shrink-0"
           >
-            <Receipt size={15} /> Manage Line Items
+            <Receipt size={15} /> <span className="hidden sm:inline">Manage</span> Line Items
           </Link>
         )}
       </div>
 
-      {error && <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-4 border border-red-200">{error}</p>}
+      {error && (
+        <p className="bg-red-50 text-red-700 text-sm rounded-lg p-3 mb-4 border border-red-200">{error}</p>
+      )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-5">
         <div>
-          <label className="block text-sm text-slate-700 mb-1">Client</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1.5">Client</label>
           <select
             value={form.client}
             onChange={(e) => handleChange('client', e.target.value)}
             required
-            className="w-full px-3 py-2 rounded border border-slate-300"
+            className={inputClasses}
           >
             <option value="">Select a client...</option>
             {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {isEditMode && invoice && (
             <div>
-              <label className="block text-sm text-slate-700 mb-1">Invoice Number</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">Invoice Number</label>
               <input
                 value={invoice.invoice_number}
                 disabled
-                className="w-full px-3 py-2 rounded border border-slate-300 bg-slate-50 text-slate-500"
+                className={inputClasses + ' bg-slate-50 text-slate-500'}
               />
             </div>
           )}
-          <div className={isEditMode ? '' : 'col-span-2'}>
-            <label className="block text-sm text-slate-700 mb-1">Status</label>
+          <div className={isEditMode ? '' : 'sm:col-span-2'}>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
             <select
               value={form.status}
               onChange={(e) => handleChange('status', e.target.value)}
-              className="w-full px-3 py-2 rounded border border-slate-300"
+              className={inputClasses}
             >
               {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -119,43 +132,78 @@ export default function InvoiceFormPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm text-slate-700 mb-1">Issue Date</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Issue Date</label>
             <input
               type="date"
               value={form.issue_date}
               onChange={(e) => handleChange('issue_date', e.target.value)}
               required
-              className="w-full px-3 py-2 rounded border border-slate-300"
+              className={inputClasses}
             />
           </div>
           <div>
-            <label className="block text-sm text-slate-700 mb-1">Due Date</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Due Date</label>
             <input
               type="date"
               value={form.due_date}
               onChange={(e) => handleChange('due_date', e.target.value)}
               required
-              className="w-full px-3 py-2 rounded border border-slate-300"
+              min={form.issue_date || undefined}
+              className={inputClasses}
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm text-slate-700 mb-1">Notes</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1.5">Notes</label>
           <textarea
             value={form.notes}
             onChange={(e) => handleChange('notes', e.target.value)}
-            rows={2}
-            className="w-full px-3 py-2 rounded border border-slate-300"
+            rows={3}
+            placeholder="Optional — shown on the printed invoice"
+            className={inputClasses}
           />
         </div>
 
-        <div className="flex gap-3 pt-2">
-          <button type="submit" disabled={isSubmitting} className="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-5 py-2 rounded transition-colors disabled:opacity-50">
+        {!isEditMode && (
+          <p className="text-xs text-slate-400 -mt-1">
+            After saving, you'll be taken straight to add line items for this invoice.
+          </p>
+        )}
+
+        {/* Desktop actions */}
+        <div className="hidden sm:flex gap-3 pt-2">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors disabled:opacity-50"
+          >
             {isSubmitting ? 'Saving...' : 'Save'}
           </button>
-          <button type="button" onClick={() => navigate('/invoices')} className="text-slate-600 hover:text-slate-800 px-5 py-2">
+          <button
+            type="button"
+            onClick={() => navigate('/invoices')}
+            className="text-slate-500 hover:text-slate-800 px-5 py-2.5"
+          >
             Cancel
+          </button>
+        </div>
+
+        {/* Mobile sticky actions */}
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 flex gap-3 z-10">
+          <button
+            type="button"
+            onClick={() => navigate('/invoices')}
+            className="flex-1 text-slate-600 border border-slate-300 px-5 py-2.5 rounded-lg"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex-1 bg-blue-900 hover:bg-blue-800 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors disabled:opacity-50"
+          >
+            {isSubmitting ? 'Saving...' : 'Save'}
           </button>
         </div>
       </form>

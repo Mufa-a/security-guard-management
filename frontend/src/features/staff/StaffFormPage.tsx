@@ -1,7 +1,16 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  UserCircle2,
+  Fingerprint,
+  MapPin,
+  Briefcase,
+  ShieldCheck,
+  ArrowLeft,
+} from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { registerUser } from '../../api/accountsApi';
 import {
@@ -81,6 +90,65 @@ function validateEmployeeForm(
 
   return null;
 }
+
+/* ---------- shared light-panel building blocks ---------- */
+
+function SectionCard({
+  icon: Icon,
+  title,
+  subtitle,
+  children,
+}: {
+  icon: React.ElementType;
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <header className="flex items-center gap-3 px-6 py-4 border-b border-slate-100 bg-slate-50/60">
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#C81E3A]/10 text-[#C81E3A] ring-1 ring-[#C81E3A]/20">
+          <Icon size={18} strokeWidth={2} />
+        </span>
+        <div>
+          <h2 className="font-['Oswald'] text-sm tracking-[0.14em] uppercase text-slate-800">
+            {title}
+          </h2>
+          {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
+        </div>
+      </header>
+      <div className="p-6 space-y-5">{children}</div>
+    </section>
+  );
+}
+
+function Field({
+  label,
+  children,
+  hint,
+  className = '',
+}: {
+  label: string;
+  children: React.ReactNode;
+  hint?: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <label className="block text-[11px] font-medium tracking-wide uppercase text-slate-500 mb-1.5">
+        {label}
+      </label>
+      {children}
+      {hint && <p className="text-[11px] text-slate-400 mt-1.5">{hint}</p>}
+    </div>
+  );
+}
+
+const inputClasses =
+  'w-full px-3.5 py-2.5 rounded-lg bg-white border border-slate-300 text-slate-900 placeholder-slate-400 ' +
+  'focus:outline-none focus:ring-2 focus:ring-[#C81E3A]/40 focus:border-[#C81E3A] transition-colors';
+
+const monoInputClasses = inputClasses + ' font-mono tracking-wider';
 
 export default function StaffFormPage() {
   const { id } = useParams();
@@ -183,6 +251,7 @@ export default function StaffFormPage() {
           employment_status: form.employment_status,
           height_cm: form.height_cm ? Number(form.height_cm) : undefined,
         });
+        navigate(isCreatingGuard ? '/active-guards' : '/staff');
       } else {
         const newUser = await registerUser({
           email: form.email,
@@ -193,7 +262,7 @@ export default function StaffFormPage() {
           role: form.role,
         });
 
-        await createEmployeeProfile({
+        const newProfile = await createEmployeeProfile({
           user: newUser.id,
           national_id: form.national_id,
           date_of_birth: form.date_of_birth || undefined,
@@ -205,8 +274,20 @@ export default function StaffFormPage() {
           employment_status: form.employment_status,
           height_cm: form.height_cm ? Number(form.height_cm) : undefined,
         });
+
+        // Only ADMIN/MANAGER can reach the salary page (see /staff/:id/salary
+        // in App.tsx) — anyone else falls back to the old destination so
+        // ProtectedRoute doesn't just bounce them straight back out.
+        const canSeeSalary = user?.role === 'ADMIN' || user?.role === 'MANAGER';
+        console.log('DEBUG newProfile:', newProfile);
+        console.log('DEBUG user role:', user?.role);
+        console.log('DEBUG canSeeSalary:', canSeeSalary);
+        if (canSeeSalary && newProfile?.id) {
+          navigate(`/staff/${newProfile.id}/salary`);
+        } else {
+          navigate(isCreatingGuard ? '/active-guards' : '/staff');
+        }
       }
-      navigate(isCreatingGuard ? '/active-guards' : '/staff');
     } catch {
       setError('Failed to save employee record. Check required fields.');
     } finally {
@@ -238,332 +319,342 @@ export default function StaffFormPage() {
   }
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-slate-800 mb-1">
-        {isEditMode ? 'Edit Employee' : isCreatingGuard ? 'Add Guard' : 'Add Employee'}
-      </h1>
+    <div className="min-h-screen bg-slate-50 px-4 py-10">
+      <div className="max-w-3xl mx-auto">
+        {/* Back + heading */}
+        <button
+          type="button"
+          onClick={() => navigate(isCreatingGuard ? '/active-guards' : '/staff')}
+          className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-700 transition-colors mb-5"
+        >
+          <ArrowLeft size={14} />
+          Back to {isCreatingGuard ? 'Active Guards' : 'Staff'}
+        </button>
 
-      {isEditMode && (
-        <div className="flex gap-1 mb-6 border-b border-slate-200">
-          <span className="px-4 py-2 text-sm font-medium text-blue-900 border-b-2 border-blue-900">
-            Details
-          </span>
-          {canSeeSalaryTab && (
-            <button
-              type="button"
-              onClick={() => navigate(`/staff/${id}/salary`)}
-              className="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700"
-            >
-              Salary
-            </button>
-          )}
+        <div className="mb-8 text-center">
+          <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-[#C81E3A]/80 mb-2">
+            Crimecurb Security Services
+          </p>
+          <h1 className="font-['Oswald'] text-3xl tracking-wide uppercase text-slate-900">
+            {isEditMode ? 'Edit Employee' : isCreatingGuard ? 'Add Guard' : 'Add Employee'}
+          </h1>
         </div>
-      )}
 
-      {!isEditMode && <div className="mb-6" />}
+        {isEditMode && (
+          <div className="flex justify-center gap-1 mb-6">
+            <span className="px-4 py-2 text-xs font-medium tracking-wide uppercase text-slate-900 bg-slate-100 rounded-t-lg border-b-2 border-[#C81E3A]">
+              Details
+            </span>
+            {canSeeSalaryTab && (
+              <button
+                type="button"
+                onClick={() => navigate(`/staff/${id}/salary`)}
+                className="px-4 py-2 text-xs font-medium tracking-wide uppercase text-slate-400 hover:text-slate-700 transition-colors"
+              >
+                Salary
+              </button>
+            )}
+          </div>
+        )}
 
-      {error && (
-        <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-4 border border-red-200">
-          {error}
-        </p>
-      )}
+        {error && (
+          <p className="bg-red-50 text-red-700 text-sm rounded-lg p-3 mb-6 border border-red-200">
+            {error}
+          </p>
+        )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
-        {!isEditMode && (
-          <>
-            <h2 className="text-sm font-semibold text-slate-500 uppercase">Account Details</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-slate-700 mb-1">First Name</label>
-                <input
-                  value={form.first_name}
-                  onChange={(e) => handleChange('first_name', e.target.value)}
-                  required
-                  className="w-full px-3 py-2 rounded border border-slate-300"
-                />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {!isEditMode && (
+            <SectionCard icon={UserCircle2} title="Account Details" subtitle="Login credentials and contact role">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="First Name">
+                  <input
+                    value={form.first_name}
+                    onChange={(e) => handleChange('first_name', e.target.value)}
+                    required
+                    className={inputClasses}
+                  />
+                </Field>
+                <Field label="Last Name">
+                  <input
+                    value={form.last_name}
+                    onChange={(e) => handleChange('last_name', e.target.value)}
+                    required
+                    className={inputClasses}
+                  />
+                </Field>
               </div>
-              <div>
-                <label className="block text-sm text-slate-700 mb-1">Last Name</label>
-                <input
-                  value={form.last_name}
-                  onChange={(e) => handleChange('last_name', e.target.value)}
-                  required
-                  className="w-full px-3 py-2 rounded border border-slate-300"
-                />
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-sm text-slate-700 mb-1">Email</label>
+              <Field label="Email">
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => handleChange('email', e.target.value)}
+                  required
+                  className={inputClasses}
+                />
+              </Field>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="Password">
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={form.password}
+                      onChange={(e) => handleChange('password', e.target.value)}
+                      required
+                      minLength={8}
+                      className={inputClasses + ' pr-10'}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </Field>
+                <Field label="Confirm Password">
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      minLength={8}
+                      className={inputClasses + ' pr-10'}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </Field>
+              </div>
+              <p className="text-[11px] text-slate-400 -mt-2">
+                Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 2 numbers.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="Phone Number">
+                  <input
+                    value={form.phone_number}
+                    onChange={(e) => handleDigitsChange('phone_number', e.target.value, 10)}
+                    required
+                    inputMode="numeric"
+                    maxLength={10}
+                    placeholder="10 digits"
+                    className={monoInputClasses}
+                  />
+                </Field>
+                <Field label="Role">
+                  {isCreatingGuard ? (
+                    <input
+                      value="GUARD"
+                      disabled
+                      className={inputClasses + ' opacity-60 cursor-not-allowed bg-slate-50'}
+                    />
+                  ) : (
+                    <select
+                      value={form.role}
+                      onChange={(e) => handleChange('role', e.target.value)}
+                      className={inputClasses}
+                    >
+                      {ROLES.map((r) => (
+                        <option key={r} value={r}>
+                          {r}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </Field>
+              </div>
+            </SectionCard>
+          )}
+
+          <SectionCard
+            icon={Fingerprint}
+            title="Identification"
+            subtitle="Official ID, date of birth and physical description"
+          >
+            <Field
+              label="National ID"
+              hint={
+                !isEditMode
+                  ? `Employee number will be auto-assigned (e.g. ${isCreatingGuard ? 'GRD-004' : 'STF-004'}) once saved.`
+                  : undefined
+              }
+            >
               <input
-                type="email"
-                value={form.email}
-                onChange={(e) => handleChange('email', e.target.value)}
+                value={form.national_id}
+                onChange={(e) => handleDigitsChange('national_id', e.target.value, 9)}
                 required
-                className="w-full px-3 py-2 rounded border border-slate-300"
+                inputMode="numeric"
+                maxLength={9}
+                placeholder="7-9 digits"
+                className={monoInputClasses}
               />
-            </div>
+            </Field>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-slate-700 mb-1">Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={form.password}
-                    onChange={(e) => handleChange('password', e.target.value)}
-                    required
-                    minLength={8}
-                    className="w-full px-3 py-2 pr-10 rounded border border-slate-300"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm text-slate-700 mb-1">Confirm Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    minLength={8}
-                    className="w-full px-3 py-2 pr-10 rounded border border-slate-300"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-            </div>
-            <p className="text-xs text-slate-500 -mt-2">
-              Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 2 numbers.
-            </p>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-slate-700 mb-1">Phone Number</label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Field label="Date of Birth" className="sm:col-span-1">
                 <input
-                  value={form.phone_number}
-                  onChange={(e) => handleDigitsChange('phone_number', e.target.value, 10)}
+                  type="date"
+                  value={form.date_of_birth}
+                  onChange={(e) => handleChange('date_of_birth', e.target.value)}
+                  required
+                  className={inputClasses}
+                />
+              </Field>
+              <Field label="Gender">
+                <select
+                  value={form.gender}
+                  onChange={(e) => handleChange('gender', e.target.value)}
+                  required
+                  className={inputClasses}
+                >
+                  <option value="">Select...</option>
+                  {GENDERS.map((g) => (
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Height (cm)">
+                <input
+                  type="number"
+                  value={form.height_cm}
+                  onChange={(e) => handleChange('height_cm', e.target.value)}
+                  required
+                  className={monoInputClasses}
+                />
+              </Field>
+            </div>
+          </SectionCard>
+
+          <SectionCard icon={MapPin} title="Contact & Next of Kin" subtitle="Address and emergency contact">
+            <Field label="Physical Address">
+              <input
+                value={form.physical_address}
+                onChange={(e) => handleChange('physical_address', e.target.value)}
+                required
+                className={inputClasses}
+              />
+            </Field>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Next of Kin Name">
+                <input
+                  value={form.next_of_kin_name}
+                  onChange={(e) => handleChange('next_of_kin_name', e.target.value)}
+                  required
+                  className={inputClasses}
+                />
+              </Field>
+              <Field label="Next of Kin Phone">
+                <input
+                  value={form.next_of_kin_phone}
+                  onChange={(e) => handleDigitsChange('next_of_kin_phone', e.target.value, 10)}
                   required
                   inputMode="numeric"
                   maxLength={10}
                   placeholder="10 digits"
-                  className="w-full px-3 py-2 rounded border border-slate-300"
+                  className={monoInputClasses}
                 />
-              </div>
-              <div>
-                <label className="block text-sm text-slate-700 mb-1">Role</label>
-                {isCreatingGuard ? (
-                  <input
-                    value="GUARD"
-                    disabled
-                    className="w-full px-3 py-2 rounded border border-slate-300 bg-slate-50 text-slate-500"
-                  />
-                ) : (
-                  <select
-                    value={form.role}
-                    onChange={(e) => handleChange('role', e.target.value)}
-                    className="w-full px-3 py-2 rounded border border-slate-300"
-                  >
-                    {ROLES.map((r) => (
-                      <option key={r} value={r}>{r}</option>
-                    ))}
-                  </select>
-                )}
-              </div>
+              </Field>
             </div>
+          </SectionCard>
 
-            <hr className="my-4" />
-            <h2 className="text-sm font-semibold text-slate-500 uppercase">Employee Details</h2>
-          </>
-        )}
-         <div className="grid grid-cols-2 gap-4">
-  <div>
-    <label className="block text-sm text-slate-700 mb-1">National ID</label>
-            <input
-              value={form.national_id}
-              onChange={(e) => handleDigitsChange('national_id', e.target.value, 9)}
-              required
-              inputMode="numeric"
-              maxLength={9}
-              placeholder="7-9 digits"
-              className="w-full px-3 py-2 rounded border border-slate-300"
-            />
-          </div>
-        </div>
-
-        {!isEditMode && (
-  <p className="text-xs text-slate-400 -mt-2">
-    Employee number will be auto-assigned (e.g. {isCreatingGuard ? 'GRD-004' : 'STF-004'}) once saved.
-  </p>
-)}
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-slate-700 mb-1">Date of Birth</label>
-            <input
-              type="date"
-              value={form.date_of_birth}
-              onChange={(e) => handleChange('date_of_birth', e.target.value)}
-              required
-              className="w-full px-3 py-2 rounded border border-slate-300"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-slate-700 mb-1">Gender</label>
-            <select
-              value={form.gender}
-              onChange={(e) => handleChange('gender', e.target.value)}
-              required
-              className="w-full px-3 py-2 rounded border border-slate-300"
-            >
-              <option value="">Select...</option>
-              {GENDERS.map((g) => (
-                <option key={g} value={g}>{g}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm text-slate-700 mb-1">Physical Address</label>
-          <input
-            value={form.physical_address}
-            onChange={(e) => handleChange('physical_address', e.target.value)}
-            required
-            className="w-full px-3 py-2 rounded border border-slate-300"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-slate-700 mb-1">Next of Kin Name</label>
-            <input
-              value={form.next_of_kin_name}
-              onChange={(e) => handleChange('next_of_kin_name', e.target.value)}
-              required
-              className="w-full px-3 py-2 rounded border border-slate-300"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-slate-700 mb-1">Next of Kin Phone</label>
-            <input
-              value={form.next_of_kin_phone}
-              onChange={(e) => handleDigitsChange('next_of_kin_phone', e.target.value, 10)}
-              required
-              inputMode="numeric"
-              maxLength={10}
-              placeholder="10 digits"
-              className="w-full px-3 py-2 rounded border border-slate-300"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm text-slate-700 mb-1">Date Employed</label>
-            <input
-              type="date"
-              value={form.date_employed}
-              onChange={(e) => handleChange('date_employed', e.target.value)}
-              required
-              className="w-full px-3 py-2 rounded border border-slate-300"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-slate-700 mb-1">Status</label>
-            <select
-              value={form.employment_status}
-              onChange={(e) => handleChange('employment_status', e.target.value)}
-              className="w-full px-3 py-2 rounded border border-slate-300"
-            >
-              {EMPLOYMENT_STATUSES.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm text-slate-700 mb-1">Height (cm)</label>
-            <input
-              type="number"
-              value={form.height_cm}
-              onChange={(e) => handleChange('height_cm', e.target.value)}
-              required
-              className="w-full px-3 py-2 rounded border border-slate-300"
-            />
-          </div>
-        </div>
-
-        <div className="flex gap-3 pt-2">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-5 py-2 rounded transition-colors disabled:opacity-50"
-          >
-            {isSubmitting ? 'Saving...' : 'Save'}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate(isCreatingGuard ? '/active-guards' : '/staff')}
-            className="text-slate-600 hover:text-slate-800 px-5 py-2"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-
-      {isEditMode && employeeRole === 'GUARD' && user?.role === 'ADMIN' && (
-        <div className="bg-white rounded-lg shadow p-6 mt-4">
-          <h2 className="text-sm font-semibold text-slate-500 uppercase mb-3">Guard PIN Login</h2>
-
-          {pinError && (
-            <p className="bg-red-50 text-red-700 text-sm rounded p-2 mb-3 border border-red-200">
-              {pinError}
-            </p>
-          )}
-          {pinMessage && (
-            <p className="bg-green-50 text-green-700 text-sm rounded p-2 mb-3 border border-green-200">
-              {pinMessage}
-            </p>
-          )}
-
-          <form onSubmit={handleSetPin} className="flex gap-3 items-end">
-            <div className="flex-1">
-              <label className="block text-sm text-slate-700 mb-1">Set / Reset 6-Digit PIN</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                value={pinValue}
-                onChange={(e) => setPinValue(e.target.value.replace(/\D/g, ''))}
-                placeholder="000000"
-                className="w-full px-3 py-2 rounded border border-slate-300 tracking-[0.3em] text-center"
-              />
+          <SectionCard icon={Briefcase} title="Employment" subtitle="Start date and current status">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Date Employed">
+                <input
+                  type="date"
+                  value={form.date_employed}
+                  onChange={(e) => handleChange('date_employed', e.target.value)}
+                  required
+                  className={inputClasses}
+                />
+              </Field>
+              <Field label="Status">
+                <select
+                  value={form.employment_status}
+                  onChange={(e) => handleChange('employment_status', e.target.value)}
+                  className={inputClasses}
+                >
+                  {EMPLOYMENT_STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </Field>
             </div>
+          </SectionCard>
+
+          <div className="flex gap-3 justify-center pt-2">
             <button
               type="submit"
-              disabled={isSettingPin}
-              className="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-5 py-2 rounded transition-colors disabled:opacity-50"
+              disabled={isSubmitting}
+              className="bg-[#C81E3A] hover:bg-[#a91830] text-white font-['Oswald'] tracking-wide uppercase text-sm px-8 py-3 rounded-lg transition-colors disabled:opacity-50 shadow-sm"
             >
-              {isSettingPin ? 'Saving...' : 'Set PIN'}
+              {isSubmitting ? 'Saving...' : 'Save'}
             </button>
-          </form>
-        </div>
-      )}
+            <button
+              type="button"
+              onClick={() => navigate(isCreatingGuard ? '/active-guards' : '/staff')}
+              className="text-slate-500 hover:text-slate-800 font-['Oswald'] tracking-wide uppercase text-sm px-8 py-3 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+
+        {isEditMode && employeeRole === 'GUARD' && user?.role === 'ADMIN' && (
+          <div className="mt-6">
+            <SectionCard icon={ShieldCheck} title="Guard PIN Login" subtitle="Set or reset the 6-digit check-in PIN">
+              {pinError && (
+                <p className="bg-red-50 text-red-700 text-sm rounded-lg p-3 border border-red-200">
+                  {pinError}
+                </p>
+              )}
+              {pinMessage && (
+                <p className="bg-emerald-50 text-emerald-700 text-sm rounded-lg p-3 border border-emerald-200">
+                  {pinMessage}
+                </p>
+              )}
+
+              <form onSubmit={handleSetPin} className="flex flex-col sm:flex-row gap-3 sm:items-end">
+                <Field label="Set / Reset 6-Digit PIN" className="flex-1">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={pinValue}
+                    onChange={(e) => setPinValue(e.target.value.replace(/\D/g, ''))}
+                    placeholder="000000"
+                    className={monoInputClasses + ' text-center text-lg tracking-[0.4em]'}
+                  />
+                </Field>
+                <button
+                  type="submit"
+                  disabled={isSettingPin}
+                  className="bg-[#C81E3A] hover:bg-[#a91830] text-white font-['Oswald'] tracking-wide uppercase text-sm px-6 py-2.5 rounded-lg transition-colors disabled:opacity-50 h-fit"
+                >
+                  {isSettingPin ? 'Saving...' : 'Set PIN'}
+                </button>
+              </form>
+            </SectionCard>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -18,6 +18,7 @@ urlpatterns = [
     path('api/invoices/', include('apps.invoices.urls')),
     path('api/payroll/', include('apps.payroll.urls')),
     path('api/expenses/', include('apps.expenses.urls')),
+    path('api/erip/', include('apps.erip.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

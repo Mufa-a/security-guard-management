@@ -14,3 +14,4 @@ sqlparse==0.5.5
 tzdata==2026.3
 whitenoise
 django-redis==5.4.0
+anthropic==1.1.0
