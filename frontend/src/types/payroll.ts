@@ -67,8 +67,6 @@ export interface SalaryStructureCreatePayload {
   employee: string;
   basic_salary: string;
   payment_frequency: PaymentFrequency;
-  effective_from: string;
-  effective_to?: string;
   overtime_rate?: string;
 }
 

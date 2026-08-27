@@ -22,7 +22,7 @@ function yearsOfService(dateEmployed: string): string {
 export default function StaffCard({ staff, onOpenProfile }: StaffCardProps) {
   const fullName = `${staff.user.first_name} ${staff.user.last_name}`;
   const initials = `${staff.user.first_name?.[0] ?? ''}${staff.user.last_name?.[0] ?? ''}`.toUpperCase();
-  const roleStyle = ROLE_STYLES[staff.user.role] ?? ROLE_STYLES.SUPERVISOR;
+  const roleStyle = ROLE_STYLES[staff.user.role ?? ''] ?? ROLE_STYLES.SUPERVISOR;
   const RoleIcon = roleStyle.icon;
 
   return (

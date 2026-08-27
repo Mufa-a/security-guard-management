@@ -321,12 +321,6 @@ function GuardDashboard() {
       ? 'critical'
       : 'default';
 
-  const payslipTone: Tone = !latestPayslip
-    ? 'default'
-    : latestPayslip.status.toUpperCase().includes('PEND')
-    ? 'warning'
-    : 'success';
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <OverviewPanel role={user?.role ?? undefined}>

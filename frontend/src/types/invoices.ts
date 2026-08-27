@@ -17,9 +17,9 @@ export interface Invoice {
   status: 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
   notes: string;
   line_items: InvoiceLineItem[];
-  subtotal: number;
-  amount_paid: number;
-  balance_due: number;
+  subtotal: string;
+  amount_paid: string;
+  balance_due: string;
   is_overdue: boolean;
   is_active: boolean;
   created_at: string;

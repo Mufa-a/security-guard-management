@@ -135,7 +135,7 @@ export default function AttendanceManagementPage() {
     load();
   }, []);
 
-  async function handleStatusChange(id: string, status: string) {
+  async function handleStatusChange(id: string, status: Attendance['status']) {
     try {
       await updateAttendance(id, { status });
       load();
@@ -198,7 +198,7 @@ export default function AttendanceManagementPage() {
           <select
             autoFocus
             defaultValue={r.status}
-            onChange={(e) => handleStatusChange(r.id, e.target.value)}
+            onChange={(e) => handleStatusChange(r.id, e.target.value as Attendance['status'])}
             onBlur={() => setEditingId(null)}
             onClick={(e) => e.stopPropagation()}
             className="px-2 py-1 rounded border border-slate-300 text-xs"

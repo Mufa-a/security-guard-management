@@ -16,6 +16,26 @@ export interface IncidentPerson {
   created_at: string;
 }
 
+export interface IncidentAttachment {
+  id: string;
+  incident: string;
+  file: string;
+  description: string;
+  uploaded_by: string | null;
+  uploaded_by_name: string;
+  created_at: string;
+}
+
+export interface IncidentActivity {
+  id: string;
+  incident: string;
+  actor: string | null;
+  actor_name: string;
+  activity_type: 'CREATED' | 'STATUS_CHANGED' | 'ASSIGNED' | 'COMMENT' | 'EVIDENCE_ADDED';
+  note: string;
+  created_at: string;
+}
+
 export interface Incident {
   id: string;
   incident_number: string;
