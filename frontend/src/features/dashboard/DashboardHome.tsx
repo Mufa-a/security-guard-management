@@ -240,7 +240,7 @@ function GuardDashboard() {
   const [nextShift, setNextShift] = useState<{ site_name: string; date: string; start_time: string; end_time: string } | null>(null);
   const [todayAttendance, setTodayAttendance] = useState<{ check_in_time: string | null; check_out_time: string | null } | null>(null);
   const [openIncidentCount, setOpenIncidentCount] = useState(0);
-  const [latestPayslip, setLatestPayslip] = useState<{ status: string; period_detail: string; id: string } | null>(null);
+  const [, setLatestPayslip] = useState<{ status: string; period_detail: string; id: string } | null>(null);
 
   useEffect(() => {
     if (!user) return;

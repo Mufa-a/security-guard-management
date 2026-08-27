@@ -38,7 +38,8 @@ export default function StaffDrawer({ staff, onClose, onSetStatus, onDelete }: S
   const canManageSalary = user?.role === 'ADMIN' || user?.role === 'MANAGER';
   const isAdmin = user?.role === 'ADMIN';
 
-  const roleStyle = staff ? (ROLE_STYLES[staff.user.role] ?? ROLE_STYLES.SUPERVISOR) : ROLE_STYLES.SUPERVISOR;
+  const role = staff?.user?.role ?? 'SUPERVISOR';
+const roleStyle = ROLE_STYLES[role] ?? ROLE_STYLES.SUPERVISOR;
   const RoleIcon = roleStyle.icon;
 
   return (

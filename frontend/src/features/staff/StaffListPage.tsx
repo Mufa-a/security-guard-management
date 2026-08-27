@@ -74,7 +74,7 @@ export default function StaffListPage() {
         return `${a.user.first_name} ${a.user.last_name}`.localeCompare(`${b.user.first_name} ${b.user.last_name}`);
       }
       if (sortKey === 'role') {
-        return a.user.role.localeCompare(b.user.role);
+        return (a.user.role ?? '').localeCompare(b.user.role ?? '');
       }
       // tenure — most senior first
       return new Date(a.date_employed).getTime() - new Date(b.date_employed).getTime();
