@@ -13,11 +13,23 @@ User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     role = serializers.CharField(source='role.name', read_only=True, default=None)
+    policy_accepted = serializers.SerializerMethodField()
+    pin_must_change = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ["id", "email", "first_name", "last_name", "phone_number", "role", "is_verified"]
-        read_only_fields = ["id", "is_verified"]
+        fields = [
+            "id", "email", "first_name", "last_name", "phone_number", "role",
+            "is_verified", "policy_accepted", "pin_must_change",
+        ]
+        read_only_fields = ["id", "is_verified", "policy_accepted", "pin_must_change"]
+
+    def get_policy_accepted(self, obj):
+        return obj.policy_version == CURRENT_POLICY_VERSION
+
+    def get_pin_must_change(self, obj):
+        profile = getattr(obj, 'employee_profile', None)
+        return bool(profile and profile.pin_must_change)
 
 
 class RegisterSerializer(serializers.ModelSerializer):

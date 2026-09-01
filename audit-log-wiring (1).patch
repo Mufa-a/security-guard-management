@@ -1,0 +1,27 @@
+diff --git a/backend/apps/core/apps.py b/backend/apps/core/apps.py
+index 4200076..780d3bb 100644
+--- a/backend/apps/core/apps.py
++++ b/backend/apps/core/apps.py
+@@ -4,4 +4,7 @@ from django.apps import AppConfig
+ class CoreConfig(AppConfig):
+     default_auto_field = "django.db.models.BigAutoField"
+     name = "apps.core"
+-    label = "core"
+\ No newline at end of file
++    label = "core"
++
++    def ready(self):
++        from . import signals  # noqa: F401
+\ No newline at end of file
+diff --git a/backend/config/settings/base.py b/backend/config/settings/base.py
+index 89df04a..24dc006 100644
+--- a/backend/config/settings/base.py
++++ b/backend/config/settings/base.py
+@@ -57,6 +57,7 @@ MIDDLEWARE = [
+     'django.middleware.common.CommonMiddleware',
+     'django.middleware.csrf.CsrfViewMiddleware',
+     'django.contrib.auth.middleware.AuthenticationMiddleware',
++    'apps.core.middleware.CurrentUserMiddleware',
+     'django.contrib.messages.middleware.MessageMiddleware',
+     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+ ]

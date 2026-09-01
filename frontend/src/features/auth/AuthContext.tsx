@@ -1,15 +1,13 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import { login as loginApi, pinLogin as pinLoginApi, acceptPolicy as acceptPolicyApi } from './authApi';
+import {
+  login as loginApi,
+  pinLogin as pinLoginApi,
+  acceptPolicy as acceptPolicyApi,
+  logout as logoutApi,
+  fetchMe,
+} from './authApi';
 import type { LoginPayload, PinLoginPayload } from './authApi';
-
-interface DecodedToken {
-  user_id: string;
-  email: string;
-  role: string | null;
-  exp: number;
-}
 
 interface AuthUser {
   id: string;
@@ -26,19 +24,11 @@ interface AuthContextType {
   pinLogin: (payload: PinLoginPayload) => Promise<void>;
   clearPinMustChange: () => void;
   acceptPolicy: () => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-function decodeUser(token: string): AuthUser {
-  const decoded = jwtDecode<DecodedToken>(token);
-  return { id: decoded.user_id, email: decoded.email, role: decoded.role };
-}
-
-const PIN_MUST_CHANGE_KEY = 'pin_must_change';
-const POLICY_ACCEPTED_KEY = 'policy_accepted';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -46,69 +36,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [pinMustChange, setPinMustChange] = useState(false);
   const [policyAccepted, setPolicyAccepted] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      try {
-        setUser(decodeUser(token));
-        setPinMustChange(localStorage.getItem(PIN_MUST_CHANGE_KEY) === 'true');
-        setPolicyAccepted(localStorage.getItem(POLICY_ACCEPTED_KEY) === 'true');
-      } catch {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-      }
+  // The JWT lives in an httpOnly cookie now, so it can't be decoded in JS.
+  // "Who's logged in" is instead derived by asking the backend — this runs
+  // on mount (page refresh) and right after login/pinLogin.
+  async function hydrateFromSession() {
+    try {
+      const me = await fetchMe();
+      setUser({ id: me.id, email: me.email, role: me.role });
+      setPinMustChange(me.pin_must_change);
+      setPolicyAccepted(me.policy_accepted);
+    } catch {
+      setUser(null);
+      setPinMustChange(false);
+      setPolicyAccepted(false);
     }
-    setIsLoading(false);
-  }, []);
-
-  function persistPolicyAccepted(accepted: boolean) {
-    localStorage.setItem(POLICY_ACCEPTED_KEY, accepted ? 'true' : 'false');
-    setPolicyAccepted(accepted);
   }
 
+  useEffect(() => {
+    hydrateFromSession().finally(() => setIsLoading(false));
+  }, []);
+
   async function login(payload: LoginPayload) {
-    const { access, refresh, policy_accepted } = await loginApi(payload);
-    localStorage.setItem('access_token', access);
-    localStorage.setItem('refresh_token', refresh);
-    localStorage.removeItem(PIN_MUST_CHANGE_KEY);
-    setPinMustChange(false);
-    persistPolicyAccepted(policy_accepted);
-    setUser(decodeUser(access));
+    await loginApi(payload);
+    await hydrateFromSession();
   }
 
   async function pinLogin(payload: PinLoginPayload) {
-    const { access, refresh, pin_must_change, policy_accepted } = await pinLoginApi(payload);
-    localStorage.setItem('access_token', access);
-    localStorage.setItem('refresh_token', refresh);
-    if (pin_must_change) {
-      localStorage.setItem(PIN_MUST_CHANGE_KEY, 'true');
-      setPinMustChange(true);
-    } else {
-      localStorage.removeItem(PIN_MUST_CHANGE_KEY);
-      setPinMustChange(false);
-    }
-    persistPolicyAccepted(policy_accepted);
-    setUser(decodeUser(access));
+    await pinLoginApi(payload);
+    await hydrateFromSession();
   }
 
   function clearPinMustChange() {
-    localStorage.removeItem(PIN_MUST_CHANGE_KEY);
     setPinMustChange(false);
   }
 
   async function acceptPolicy() {
     await acceptPolicyApi();
-    persistPolicyAccepted(true);
+    setPolicyAccepted(true);
   }
 
-  function logout() {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem(PIN_MUST_CHANGE_KEY);
-    localStorage.removeItem(POLICY_ACCEPTED_KEY);
-    setUser(null);
-    setPinMustChange(false);
-    setPolicyAccepted(false);
+  async function logout() {
+    try {
+      await logoutApi();
+    } finally {
+      setUser(null);
+      setPinMustChange(false);
+      setPolicyAccepted(false);
+    }
   }
 
   return (

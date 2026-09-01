@@ -1,20 +1,53 @@
 from .models import IPLockout, CURRENT_POLICY_VERSION
 from .utils import get_client_ip
 from .throttles import LoginRateThrottle, PasswordResetRateThrottle
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
+from django.middleware.csrf import get_token as get_csrf_token
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework import generics, permissions, status, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework import generics
 from apps.core.permissions import IsManagerOrAdmin
 from datetime import timedelta
 from django.utils import timezone
 from .serializers import PinLoginSerializer
+
+
+def set_auth_cookies(response, access_token, refresh_token=None):
+    """Attach the JWTs as httpOnly cookies. Never exposed to JS."""
+    cookie_kwargs = dict(
+        httponly=True,
+        secure=not settings.DEBUG,
+        samesite='None' if not settings.DEBUG else 'Lax',
+    )
+    response.set_cookie(
+        'access_token',
+        access_token,
+        max_age=int(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()),
+        path='/',
+        **cookie_kwargs,
+    )
+    if refresh_token is not None:
+        response.set_cookie(
+            'refresh_token',
+            refresh_token,
+            max_age=int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
+            path='/api/accounts/',
+            **cookie_kwargs,
+        )
+
+
+def clear_auth_cookies(response):
+    response.delete_cookie('access_token', path='/')
+    response.delete_cookie('refresh_token', path='/api/accounts/')
 
 
 
@@ -81,6 +114,11 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         lockout.register_success()
         if user:
             user.register_password_success()
+
+        access = response.data.pop('access', None)
+        refresh = response.data.pop('refresh', None)
+        set_auth_cookies(response, access, refresh)
+        get_csrf_token(request)  # ensures the readable csrftoken cookie is issued
 
         return response
 
@@ -235,9 +273,55 @@ class PinLoginView(APIView):
         ip_lockout.register_success()
 
         token = CustomTokenObtainPairSerializer.get_token(employee.user)
-        return Response({
-            'access': str(token.access_token),
-            'refresh': str(token),
+        response = Response({
             'pin_must_change': employee.pin_must_change,
             'policy_accepted': employee.user.policy_version == CURRENT_POLICY_VERSION,
         })
+        set_auth_cookies(response, str(token.access_token), str(token))
+        get_csrf_token(request)
+        return response
+
+
+class CookieTokenRefreshView(TokenRefreshView):
+    """
+    Reads the refresh token from the httpOnly cookie (never from the
+    request body) and issues new httpOnly cookies for the rotated pair.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get('refresh_token')
+        if not refresh_token:
+            return Response({'detail': 'Refresh token missing.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = self.get_serializer(data={'refresh': refresh_token})
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError:
+            response = Response({'detail': 'Refresh token invalid or expired.'}, status=status.HTTP_401_UNAUTHORIZED)
+            clear_auth_cookies(response)
+            return response
+
+        access = serializer.validated_data.get('access')
+        new_refresh = serializer.validated_data.get('refresh')  # present: ROTATE_REFRESH_TOKENS=True
+
+        response = Response({'detail': 'Token refreshed.'})
+        set_auth_cookies(response, access, new_refresh)
+        return response
+
+
+class LogoutView(APIView):
+    """Blacklists the refresh token (if present/valid) and clears both cookies."""
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        refresh_token = request.COOKIES.get('refresh_token')
+        if refresh_token:
+            try:
+                RefreshToken(refresh_token).blacklist()
+            except TokenError:
+                pass  # already invalid/expired — fine, we're logging out anyway
+
+        response = Response({'detail': 'Logged out.'})
+        clear_auth_cookies(response)
+        return response
