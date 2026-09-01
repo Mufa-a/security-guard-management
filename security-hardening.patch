@@ -1,0 +1,632 @@
+diff --git a/backend/apps/accounts/authentication.py b/backend/apps/accounts/authentication.py
+new file mode 100644
+index 0000000..573f65b
+--- /dev/null
++++ b/backend/apps/accounts/authentication.py
+@@ -0,0 +1,40 @@
++from django.middleware.csrf import CsrfViewMiddleware
++from rest_framework import exceptions
++from rest_framework_simplejwt.authentication import JWTAuthentication
++
++
++class CookieJWTAuthentication(JWTAuthentication):
++    """
++    Reads the JWT access token from an httpOnly cookie instead of the
++    Authorization header.
++
++    Because the token itself is no longer readable by JS (that's the whole
++    point of the httpOnly cookie), it can no longer act as its own CSRF
++    defense the way a manually-attached Bearer header could. So any
++    state-changing request authenticated this way must carry a valid
++    CSRF token too (double-submit cookie pattern, same mechanism Django's
++    SessionAuthentication uses) — enforced below via Django's own
++    CsrfViewMiddleware.check.
++    """
++
++    def authenticate(self, request):
++        raw_token = request.COOKIES.get('access_token')
++        if raw_token is None:
++            return None
++
++        validated_token = self.get_validated_token(raw_token)
++        self.enforce_csrf(request)
++        user = self.get_user(validated_token)
++        return user, validated_token
++
++    def enforce_csrf(self, request):
++        if request.method in ('GET', 'HEAD', 'OPTIONS', 'TRACE'):
++            return
++
++        def dummy_get_response(_request):
++            return None
++
++        check = CsrfViewMiddleware(dummy_get_response)
++        reason = check.process_view(request, None, (), {})
++        if reason:
++            raise exceptions.PermissionDenied(f'CSRF check failed: {reason}')
+diff --git a/backend/apps/accounts/serializers.py b/backend/apps/accounts/serializers.py
+index f16032f..9239fa4 100644
+--- a/backend/apps/accounts/serializers.py
++++ b/backend/apps/accounts/serializers.py
+@@ -13,11 +13,23 @@ User = get_user_model()
+ 
+ class UserSerializer(serializers.ModelSerializer):
+     role = serializers.CharField(source='role.name', read_only=True, default=None)
++    policy_accepted = serializers.SerializerMethodField()
++    pin_must_change = serializers.SerializerMethodField()
+ 
+     class Meta:
+         model = User
+-        fields = ["id", "email", "first_name", "last_name", "phone_number", "role", "is_verified"]
+-        read_only_fields = ["id", "is_verified"]
++        fields = [
++            "id", "email", "first_name", "last_name", "phone_number", "role",
++            "is_verified", "policy_accepted", "pin_must_change",
++        ]
++        read_only_fields = ["id", "is_verified", "policy_accepted", "pin_must_change"]
++
++    def get_policy_accepted(self, obj):
++        return obj.policy_version == CURRENT_POLICY_VERSION
++
++    def get_pin_must_change(self, obj):
++        profile = getattr(obj, 'employee_profile', None)
++        return bool(profile and profile.pin_must_change)
+ 
+ 
+ class RegisterSerializer(serializers.ModelSerializer):
+diff --git a/backend/apps/accounts/urls.py b/backend/apps/accounts/urls.py
+index b1e3e38..5ebb792 100644
+--- a/backend/apps/accounts/urls.py
++++ b/backend/apps/accounts/urls.py
+@@ -1,11 +1,12 @@
+ from .views import UserListView
+ from django.urls import path
+-from rest_framework_simplejwt.views import TokenRefreshView
+ from .views import PinLoginView
+ from .views import AcceptPolicyView
+ from .views import (
+     RegisterView,
+     CustomTokenObtainPairView,
++    CookieTokenRefreshView,
++    LogoutView,
+     MeView,
+     PasswordResetRequestView,
+     PasswordResetConfirmView,
+@@ -14,7 +15,8 @@ from .views import (
+ urlpatterns = [
+     path("register/", RegisterView.as_view(), name="register"),
+     path("login/", CustomTokenObtainPairView.as_view(), name="login"),
+-    path("login/refresh/", TokenRefreshView.as_view(), name="login-refresh"),
++    path("login/refresh/", CookieTokenRefreshView.as_view(), name="login-refresh"),
++    path("logout/", LogoutView.as_view(), name="logout"),
+     path("me/", MeView.as_view(), name="me"),
+     path("password-reset/", PasswordResetRequestView.as_view(), name="password-reset"),
+     path("password-reset/confirm/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
+diff --git a/backend/apps/accounts/views.py b/backend/apps/accounts/views.py
+index f4d3132..e1820c4 100644
+--- a/backend/apps/accounts/views.py
++++ b/backend/apps/accounts/views.py
+@@ -1,15 +1,19 @@
+ from .models import IPLockout, CURRENT_POLICY_VERSION
+ from .utils import get_client_ip
+ from .throttles import LoginRateThrottle, PasswordResetRateThrottle
++from django.conf import settings
+ from django.contrib.auth import get_user_model
+ from django.contrib.auth.tokens import PasswordResetTokenGenerator
+ from django.core.mail import send_mail
++from django.middleware.csrf import get_token as get_csrf_token
+ from django.utils.encoding import force_bytes
+ from django.utils.http import urlsafe_base64_encode
+ from rest_framework import generics, permissions, status, serializers
+ from rest_framework.response import Response
+ from rest_framework.views import APIView
+-from rest_framework_simplejwt.views import TokenObtainPairView
++from rest_framework_simplejwt.exceptions import TokenError
++from rest_framework_simplejwt.tokens import RefreshToken
++from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+ from rest_framework import generics
+ from apps.core.permissions import IsManagerOrAdmin
+ from datetime import timedelta
+@@ -17,6 +21,35 @@ from django.utils import timezone
+ from .serializers import PinLoginSerializer
+ 
+ 
++def set_auth_cookies(response, access_token, refresh_token=None):
++    """Attach the JWTs as httpOnly cookies. Never exposed to JS."""
++    cookie_kwargs = dict(
++        httponly=True,
++        secure=not settings.DEBUG,
++        samesite='None' if not settings.DEBUG else 'Lax',
++    )
++    response.set_cookie(
++        'access_token',
++        access_token,
++        max_age=int(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()),
++        path='/',
++        **cookie_kwargs,
++    )
++    if refresh_token is not None:
++        response.set_cookie(
++            'refresh_token',
++            refresh_token,
++            max_age=int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
++            path='/api/accounts/',
++            **cookie_kwargs,
++        )
++
++
++def clear_auth_cookies(response):
++    response.delete_cookie('access_token', path='/')
++    response.delete_cookie('refresh_token', path='/api/accounts/')
++
++
+ 
+ from .serializers import (
+     RegisterSerializer,
+@@ -82,6 +115,11 @@ class CustomTokenObtainPairView(TokenObtainPairView):
+         if user:
+             user.register_password_success()
+ 
++        access = response.data.pop('access', None)
++        refresh = response.data.pop('refresh', None)
++        set_auth_cookies(response, access, refresh)
++        get_csrf_token(request)  # ensures the readable csrftoken cookie is issued
++
+         return response
+ 
+ 
+@@ -235,9 +273,55 @@ class PinLoginView(APIView):
+         ip_lockout.register_success()
+ 
+         token = CustomTokenObtainPairSerializer.get_token(employee.user)
+-        return Response({
+-            'access': str(token.access_token),
+-            'refresh': str(token),
++        response = Response({
+             'pin_must_change': employee.pin_must_change,
+             'policy_accepted': employee.user.policy_version == CURRENT_POLICY_VERSION,
+-        })
+\ No newline at end of file
++        })
++        set_auth_cookies(response, str(token.access_token), str(token))
++        get_csrf_token(request)
++        return response
++
++
++class CookieTokenRefreshView(TokenRefreshView):
++    """
++    Reads the refresh token from the httpOnly cookie (never from the
++    request body) and issues new httpOnly cookies for the rotated pair.
++    """
++    permission_classes = [permissions.AllowAny]
++
++    def post(self, request, *args, **kwargs):
++        refresh_token = request.COOKIES.get('refresh_token')
++        if not refresh_token:
++            return Response({'detail': 'Refresh token missing.'}, status=status.HTTP_401_UNAUTHORIZED)
++
++        serializer = self.get_serializer(data={'refresh': refresh_token})
++        try:
++            serializer.is_valid(raise_exception=True)
++        except TokenError:
++            response = Response({'detail': 'Refresh token invalid or expired.'}, status=status.HTTP_401_UNAUTHORIZED)
++            clear_auth_cookies(response)
++            return response
++
++        access = serializer.validated_data.get('access')
++        new_refresh = serializer.validated_data.get('refresh')  # present: ROTATE_REFRESH_TOKENS=True
++
++        response = Response({'detail': 'Token refreshed.'})
++        set_auth_cookies(response, access, new_refresh)
++        return response
++
++
++class LogoutView(APIView):
++    """Blacklists the refresh token (if present/valid) and clears both cookies."""
++    permission_classes = [permissions.AllowAny]
++
++    def post(self, request):
++        refresh_token = request.COOKIES.get('refresh_token')
++        if refresh_token:
++            try:
++                RefreshToken(refresh_token).blacklist()
++            except TokenError:
++                pass  # already invalid/expired — fine, we're logging out anyway
++
++        response = Response({'detail': 'Logged out.'})
++        clear_auth_cookies(response)
++        return response
+\ No newline at end of file
+diff --git a/backend/config/settings/base.py b/backend/config/settings/base.py
+index 89df04a..9a1d831 100644
+--- a/backend/config/settings/base.py
++++ b/backend/config/settings/base.py
+@@ -31,6 +31,7 @@ THIRD_PARTY_APPS = [
+     'rest_framework_simplejwt',
+     'rest_framework_simplejwt.token_blacklist',
+     'corsheaders',
++    'csp',
+ ]
+ 
+ # Add each of our own apps here as we build it.
+@@ -52,6 +53,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+ 
+ MIDDLEWARE = [
+     'django.middleware.security.SecurityMiddleware',
++    'csp.middleware.CSPMiddleware',
+     'corsheaders.middleware.CorsMiddleware',
+     'django.contrib.sessions.middleware.SessionMiddleware',
+     'django.middleware.common.CommonMiddleware',
+@@ -119,6 +121,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+ 
+ REST_FRAMEWORK = {
+     'DEFAULT_AUTHENTICATION_CLASSES': (
++        'apps.accounts.authentication.CookieJWTAuthentication',
+         'rest_framework_simplejwt.authentication.JWTAuthentication',
+         'rest_framework.authentication.SessionAuthentication',
+     ),
+@@ -148,8 +151,34 @@ SIMPLE_JWT = {
+     'AUTH_HEADER_TYPES': ('Bearer',),
+ }
+ 
+-# The React frontend (Vite) runs on a different port, so it needs CORS access.
++# The React frontend (Vite) runs on a different origin, so it needs CORS access.
+ CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='', cast=Csv())
++# Required for the browser to send/receive the httpOnly JWT cookies cross-origin.
++CORS_ALLOW_CREDENTIALS = True
++
++# Django's CSRF middleware needs to know which cross-origin frontends are
++# allowed to make state-changing requests — same origins as CORS above.
++CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
++
++# Render (and most PaaS hosts) terminate TLS at the proxy and forward plain
++# HTTP internally — without this, Django can't tell the original request
++# was HTTPS, which breaks SECURE_SSL_REDIRECT and secure-cookie logic.
++SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
++
++SECURE_REFERRER_POLICY = 'same-origin'
++X_FRAME_OPTIONS = 'DENY'
++
++# CSP for pages Django itself renders (admin, browsable API, password-reset
++# emails' linked pages if any). NOTE: this does NOT cover the React SPA —
++# that's served from a separate host/CDN and needs its own CSP header
++# (set via your hosting provider's headers config, e.g. Vercel/Netlify).
++CSP_DEFAULT_SRC = ("'self'",)
++CSP_SCRIPT_SRC = ("'self'",)
++CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
++CSP_IMG_SRC = ("'self'", "data:")
++CSP_FONT_SRC = ("'self'", "data:")
++CSP_FRAME_ANCESTORS = ("'none'",)
++CSP_CONNECT_SRC = ("'self'",) + tuple(CORS_ALLOWED_ORIGINS)
+ 
+ LOGGING = {
+     'version': 1,
+diff --git a/backend/config/settings/production.py b/backend/config/settings/production.py
+index 5da8ca9..8d71035 100644
+--- a/backend/config/settings/production.py
++++ b/backend/config/settings/production.py
+@@ -36,8 +36,13 @@ else:
+ SECURE_SSL_REDIRECT = True
+ SESSION_COOKIE_SECURE = True
+ CSRF_COOKIE_SECURE = True
++# Frontend (Vercel/Netlify) and backend (Render) are different origins in
++# production, so cookies need SameSite=None + Secure to be sent cross-site
++# at all. In dev, both run on localhost (different ports only, same site),
++# so the base Lax default there is fine and safer.
++SESSION_COOKIE_SAMESITE = 'None'
++CSRF_COOKIE_SAMESITE = 'None'
+ SECURE_HSTS_SECONDS = 31536000
+ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+ SECURE_HSTS_PRELOAD = True
+-SECURE_CONTENT_TYPE_NOSNIFF = True
+-X_FRAME_OPTIONS = 'DENY'
+\ No newline at end of file
++SECURE_CONTENT_TYPE_NOSNIFF = True
+\ No newline at end of file
+diff --git a/backend/requirements.txt b/backend/requirements.txt
+index 31390a7..115cad9 100644
+--- a/backend/requirements.txt
++++ b/backend/requirements.txt
+@@ -2,6 +2,7 @@ asgiref==3.12.1
+ dj-database-url==3.1.2
+ Django==5.2.16
+ django-cors-headers==4.3.1
++django-csp==3.8
+ djangorestframework==3.15.1
+ djangorestframework-simplejwt==5.3.1
+ gunicorn==26.0.0
+diff --git a/frontend/src/api/client.ts b/frontend/src/api/client.ts
+index 434731c..3240fc2 100644
+--- a/frontend/src/api/client.ts
++++ b/frontend/src/api/client.ts
+@@ -1,17 +1,34 @@
+ import axios from 'axios';
+ 
+ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://security-guard-management-2elk.onrender.com/api';
++
++// Tokens now live in httpOnly cookies set by the backend — never read or
++// written from JS. The browser attaches them automatically as long as
++// withCredentials is set on every request.
++
++function getCookie(name: string): string | null {
++  const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
++  return match ? decodeURIComponent(match[1]) : null;
++}
++
+ const apiClient = axios.create({
+   baseURL: API_BASE_URL,
++  withCredentials: true,
+   headers: {
+     'Content-Type': 'application/json',
+   },
+ });
+ 
++// CSRF double-submit: the backend sets a JS-readable "csrftoken" cookie
++// alongside the httpOnly auth cookies. Mirror it back as a header on every
++// state-changing request so Django's CSRF check passes.
+ apiClient.interceptors.request.use((config) => {
+-  const token = localStorage.getItem('access_token');
+-  if (token) {
+-    config.headers.Authorization = `Bearer ${token}`;
++  const method = (config.method || 'get').toLowerCase();
++  if (!['get', 'head', 'options'].includes(method)) {
++    const csrfToken = getCookie('csrftoken');
++    if (csrfToken) {
++      config.headers['X-CSRFToken'] = csrfToken;
++    }
+   }
+   return config;
+ });
+@@ -40,14 +57,6 @@ apiClient.interceptors.response.use(
+     ) {
+       originalRequest._retry = true;
+ 
+-      const refreshToken = localStorage.getItem('refresh_token');
+-      if (!refreshToken) {
+-        localStorage.removeItem('access_token');
+-        localStorage.removeItem('refresh_token');
+-        window.location.href = '/login';
+-        return Promise.reject(error);
+-      }
+-
+       if (isRefreshing) {
+         // Wait for the in-flight refresh to finish, then retry.
+         return new Promise((resolve) => {
+@@ -57,10 +66,8 @@ apiClient.interceptors.response.use(
+ 
+       isRefreshing = true;
+       try {
+-        const { data } = await axios.post(`${API_BASE_URL}/accounts/login/refresh/`, {
+-          refresh: refreshToken,
+-        });
+-        localStorage.setItem('access_token', data.access);
++        // No body needed — the refresh token rides along as a cookie.
++        await axios.post(`${API_BASE_URL}/accounts/login/refresh/`, {}, { withCredentials: true });
+         isRefreshing = false;
+         refreshQueue.forEach((cb) => cb());
+         refreshQueue = [];
+@@ -68,8 +75,6 @@ apiClient.interceptors.response.use(
+       } catch (refreshError) {
+         isRefreshing = false;
+         refreshQueue = [];
+-        localStorage.removeItem('access_token');
+-        localStorage.removeItem('refresh_token');
+         window.location.href = '/login';
+         return Promise.reject(refreshError);
+       }
+@@ -79,4 +84,4 @@ apiClient.interceptors.response.use(
+   }
+ );
+ 
+-export default apiClient;
+\ No newline at end of file
++export default apiClient;
+diff --git a/frontend/src/features/auth/AuthContext.tsx b/frontend/src/features/auth/AuthContext.tsx
+index 572e67b..138b56b 100644
+--- a/frontend/src/features/auth/AuthContext.tsx
++++ b/frontend/src/features/auth/AuthContext.tsx
+@@ -1,16 +1,14 @@
+ import { createContext, useContext, useState, useEffect } from 'react';
+ import type { ReactNode } from 'react';
+-import { jwtDecode } from 'jwt-decode';
+-import { login as loginApi, pinLogin as pinLoginApi, acceptPolicy as acceptPolicyApi } from './authApi';
++import {
++  login as loginApi,
++  pinLogin as pinLoginApi,
++  acceptPolicy as acceptPolicyApi,
++  logout as logoutApi,
++  fetchMe,
++} from './authApi';
+ import type { LoginPayload, PinLoginPayload } from './authApi';
+ 
+-interface DecodedToken {
+-  user_id: string;
+-  email: string;
+-  role: string | null;
+-  exp: number;
+-}
+-
+ interface AuthUser {
+   id: string;
+   email: string;
+@@ -26,89 +24,65 @@ interface AuthContextType {
+   pinLogin: (payload: PinLoginPayload) => Promise<void>;
+   clearPinMustChange: () => void;
+   acceptPolicy: () => Promise<void>;
+-  logout: () => void;
++  logout: () => Promise<void>;
+   isLoading: boolean;
+ }
+ 
+ const AuthContext = createContext<AuthContextType | undefined>(undefined);
+ 
+-function decodeUser(token: string): AuthUser {
+-  const decoded = jwtDecode<DecodedToken>(token);
+-  return { id: decoded.user_id, email: decoded.email, role: decoded.role };
+-}
+-
+-const PIN_MUST_CHANGE_KEY = 'pin_must_change';
+-const POLICY_ACCEPTED_KEY = 'policy_accepted';
+-
+ export function AuthProvider({ children }: { children: ReactNode }) {
+   const [user, setUser] = useState<AuthUser | null>(null);
+   const [isLoading, setIsLoading] = useState(true);
+   const [pinMustChange, setPinMustChange] = useState(false);
+   const [policyAccepted, setPolicyAccepted] = useState(false);
+ 
+-  useEffect(() => {
+-    const token = localStorage.getItem('access_token');
+-    if (token) {
+-      try {
+-        setUser(decodeUser(token));
+-        setPinMustChange(localStorage.getItem(PIN_MUST_CHANGE_KEY) === 'true');
+-        setPolicyAccepted(localStorage.getItem(POLICY_ACCEPTED_KEY) === 'true');
+-      } catch {
+-        localStorage.removeItem('access_token');
+-        localStorage.removeItem('refresh_token');
+-      }
++  // The JWT lives in an httpOnly cookie now, so it can't be decoded in JS.
++  // "Who's logged in" is instead derived by asking the backend — this runs
++  // on mount (page refresh) and right after login/pinLogin.
++  async function hydrateFromSession() {
++    try {
++      const me = await fetchMe();
++      setUser({ id: me.id, email: me.email, role: me.role });
++      setPinMustChange(me.pin_must_change);
++      setPolicyAccepted(me.policy_accepted);
++    } catch {
++      setUser(null);
++      setPinMustChange(false);
++      setPolicyAccepted(false);
+     }
+-    setIsLoading(false);
+-  }, []);
+-
+-  function persistPolicyAccepted(accepted: boolean) {
+-    localStorage.setItem(POLICY_ACCEPTED_KEY, accepted ? 'true' : 'false');
+-    setPolicyAccepted(accepted);
+   }
+ 
++  useEffect(() => {
++    hydrateFromSession().finally(() => setIsLoading(false));
++  }, []);
++
+   async function login(payload: LoginPayload) {
+-    const { access, refresh, policy_accepted } = await loginApi(payload);
+-    localStorage.setItem('access_token', access);
+-    localStorage.setItem('refresh_token', refresh);
+-    localStorage.removeItem(PIN_MUST_CHANGE_KEY);
+-    setPinMustChange(false);
+-    persistPolicyAccepted(policy_accepted);
+-    setUser(decodeUser(access));
++    await loginApi(payload);
++    await hydrateFromSession();
+   }
+ 
+   async function pinLogin(payload: PinLoginPayload) {
+-    const { access, refresh, pin_must_change, policy_accepted } = await pinLoginApi(payload);
+-    localStorage.setItem('access_token', access);
+-    localStorage.setItem('refresh_token', refresh);
+-    if (pin_must_change) {
+-      localStorage.setItem(PIN_MUST_CHANGE_KEY, 'true');
+-      setPinMustChange(true);
+-    } else {
+-      localStorage.removeItem(PIN_MUST_CHANGE_KEY);
+-      setPinMustChange(false);
+-    }
+-    persistPolicyAccepted(policy_accepted);
+-    setUser(decodeUser(access));
++    await pinLoginApi(payload);
++    await hydrateFromSession();
+   }
+ 
+   function clearPinMustChange() {
+-    localStorage.removeItem(PIN_MUST_CHANGE_KEY);
+     setPinMustChange(false);
+   }
+ 
+   async function acceptPolicy() {
+     await acceptPolicyApi();
+-    persistPolicyAccepted(true);
++    setPolicyAccepted(true);
+   }
+ 
+-  function logout() {
+-    localStorage.removeItem('access_token');
+-    localStorage.removeItem('refresh_token');
+-    localStorage.removeItem(PIN_MUST_CHANGE_KEY);
+-    localStorage.removeItem(POLICY_ACCEPTED_KEY);
+-    setUser(null);
+-    setPinMustChange(false);
+-    setPolicyAccepted(false);
++  async function logout() {
++    try {
++      await logoutApi();
++    } finally {
++      setUser(null);
++      setPinMustChange(false);
++      setPolicyAccepted(false);
++    }
+   }
+ 
+   return (
+@@ -129,4 +103,4 @@ export function useAuth() {
+     throw new Error('useAuth must be used within an AuthProvider');
+   }
+   return context;
+-}
+\ No newline at end of file
++}
+diff --git a/frontend/src/features/auth/authApi.ts b/frontend/src/features/auth/authApi.ts
+index a6eca08..9e4d90d 100644
+--- a/frontend/src/features/auth/authApi.ts
++++ b/frontend/src/features/auth/authApi.ts
+@@ -10,9 +10,9 @@ export interface PinLoginPayload {
+   pin: string;
+ }
+ 
++// access/refresh no longer appear here — the backend sets them as httpOnly
++// cookies directly, so the JSON body only carries non-sensitive flags.
+ export interface LoginResponse {
+-  access: string;
+-  refresh: string;
+   pin_must_change?: boolean;
+   policy_accepted: boolean;
+ }
+@@ -21,6 +21,18 @@ export interface AcceptPolicyResponse {
+   policy_accepted: boolean;
+ }
+ 
++export interface MeResponse {
++  id: string;
++  email: string;
++  first_name: string;
++  last_name: string;
++  phone_number: string;
++  role: string | null;
++  is_verified: boolean;
++  policy_accepted: boolean;
++  pin_must_change: boolean;
++}
++
+ export async function login(payload: LoginPayload): Promise<LoginResponse> {
+   const response = await apiClient.post<LoginResponse>('/accounts/login/', payload);
+   return response.data;
+@@ -34,4 +46,15 @@ export async function pinLogin(payload: PinLoginPayload): Promise<LoginResponse>
+ export async function acceptPolicy(): Promise<AcceptPolicyResponse> {
+   const response = await apiClient.post<AcceptPolicyResponse>('/accounts/accept-policy/', {});
+   return response.data;
+-}
+\ No newline at end of file
++}
++
++export async function logout(): Promise<void> {
++  await apiClient.post('/accounts/logout/', {});
++}
++
++// Since the JWT is httpOnly and no longer decodable in JS, this is now the
++// source of truth for "who is logged in" — called on mount and after login.
++export async function fetchMe(): Promise<MeResponse> {
++  const response = await apiClient.get<MeResponse>('/accounts/me/');
++  return response.data;
++}

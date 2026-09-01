@@ -9,7 +9,7 @@ import { useAuth } from '../auth/AuthContext'; // adjust path to match your proj
 
 export default function SiteFormPage() {
   const { id } = useParams();
-  const isEditMode = Boolean(id);
+  const isEditMode = Boolean(id) && id !== 'new';
   const navigate = useNavigate();
   const { user } = useAuth();
   const isReadOnly = user?.role === 'SUPERVISOR';
