@@ -31,6 +31,7 @@ THIRD_PARTY_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'csp',
 ]
 
 # Add each of our own apps here as we build it.
@@ -52,11 +53,13 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'apps.core.middleware.CurrentUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -119,6 +122,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'apps.accounts.authentication.CookieJWTAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
@@ -148,8 +152,34 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-# The React frontend (Vite) runs on a different port, so it needs CORS access.
+# The React frontend (Vite) runs on a different origin, so it needs CORS access.
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='', cast=Csv())
+# Required for the browser to send/receive the httpOnly JWT cookies cross-origin.
+CORS_ALLOW_CREDENTIALS = True
+
+# Django's CSRF middleware needs to know which cross-origin frontends are
+# allowed to make state-changing requests — same origins as CORS above.
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
+
+# Render (and most PaaS hosts) terminate TLS at the proxy and forward plain
+# HTTP internally — without this, Django can't tell the original request
+# was HTTPS, which breaks SECURE_SSL_REDIRECT and secure-cookie logic.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SECURE_REFERRER_POLICY = 'same-origin'
+X_FRAME_OPTIONS = 'DENY'
+
+# CSP for pages Django itself renders (admin, browsable API, password-reset
+# emails' linked pages if any). NOTE: this does NOT cover the React SPA —
+# that's served from a separate host/CDN and needs its own CSP header
+# (set via your hosting provider's headers config, e.g. Vercel/Netlify).
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_FONT_SRC = ("'self'", "data:")
+CSP_FRAME_ANCESTORS = ("'none'",)
+CSP_CONNECT_SRC = ("'self'",) + tuple(CORS_ALLOWED_ORIGINS)
 
 LOGGING = {
     'version': 1,
